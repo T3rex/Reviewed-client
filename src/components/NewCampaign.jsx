@@ -1,7 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import Preview from "../components/Preview";
 import Question from "../components/Question";
 import { X, CirclePlus } from "lucide-react";
+import ModifiedDropdown from "./ModifiedDropdown";
+import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
 
 const defaultQuestions = [
   "Who are you / what are you working on?",
@@ -10,6 +14,7 @@ const defaultQuestions = [
 ];
 function NewCampaign({ setShowModal }) {
   const [questions, setQuestions] = useState(defaultQuestions);
+  const [collectStars, setCollectStars] = useState(true);
 
   const addQuestion = () => {
     if (questions.length < 5) {
@@ -19,16 +24,16 @@ function NewCampaign({ setShowModal }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
+      <div className="bg-white dark:bg-gray-900 p-10 rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
         <X
           onClick={() => setShowModal(false)}
           className="sticky text-gray-500 hover:text-red-500 dark:hover:text-red-400"
         />
         <Preview />
-        {/* Modal Header */}
         <div>
+          {/* Modal Header */}
           <div className="flex flex-col justify-between items-center mb-6">
-            <h2 className="text-2xl p-4 font-bold text-gray-800 dark:text-white">
+            <h2 className="text-4xl p-4 font-bold text-gray-800 dark:text-white">
               Create a New Campaign
             </h2>
             <p className="text-gray-800 dark:text-white text-center">
@@ -36,7 +41,7 @@ function NewCampaign({ setShowModal }) {
               for collecting testimonials.
             </p>
           </div>
-
+          {/* Form */}
           <form className="space-y-5">
             {/* Campaign name */}
             <div>
@@ -56,7 +61,6 @@ function NewCampaign({ setShowModal }) {
                 </span>
               </p>
             </div>
-
             {/* Logo Upload */}
             <div className="flex flex-row gap-5">
               <img
@@ -82,7 +86,6 @@ function NewCampaign({ setShowModal }) {
                 />
               </div>
             </div>
-
             {/* Header Title */}
             <div>
               <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
@@ -95,7 +98,6 @@ function NewCampaign({ setShowModal }) {
                 required
               />
             </div>
-
             {/* Custom Message */}
             <div>
               <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
@@ -108,9 +110,8 @@ function NewCampaign({ setShowModal }) {
               />
               <p className="text-sm text-gray-500">Markdown supported</p>
             </div>
-
             {/* Questions (up to 5) */}
-            {/* <div>
+            <div>
               <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
                 Questions (up to 5)
               </label>
@@ -131,38 +132,47 @@ function NewCampaign({ setShowModal }) {
                   </span>
                 </div>
               )}
-            </div> */}
-
+            </div>
             {/* Optional Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
                   Collect extra info
                 </label>
-                <select className="w-full p-2 rounded border dark:bg-gray-800 dark:text-white">
-                  <option>Name, email, title, etc.</option>
-                </select>
+                <div>
+                  <ModifiedDropdown />
+                </div>
               </div>
-
+            </div>
+            {/* Collection Type */}
+            <div className="flex flex-row gap-10">
               <div>
                 <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
                   Collection Type
                 </label>
-                <select className="w-full p-2 rounded border dark:bg-gray-800 dark:text-white">
-                  <option>Text and video</option>
-                  <option>Video only</option>
-                  <option>Text only</option>
-                </select>
+                <Dropdown label="Collection Type" dismissOnClick={false}>
+                  <DropdownItem>Text and Video</DropdownItem>
+                  <DropdownItem>Text only</DropdownItem>
+                  <DropdownItem>Video only</DropdownItem>
+                </Dropdown>
+              </div>
+              <div>
+                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+                  Collect star ratings
+                </label>
+                <ToggleSwitch
+                  checked={collectStars}
+                  onChange={setCollectStars}
+                />
               </div>
             </div>
-
-            {/* Bottom Buttons */}
-            <div className="pt-4 flex justify-end">
+            {/* Bottom Buttons */}s
+            <div className="pt-4 flex justify-center">
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+                className="w-full bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
               >
-                Create New Space
+                Create New Campaign
               </button>
             </div>
           </form>

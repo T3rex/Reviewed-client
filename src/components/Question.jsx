@@ -24,7 +24,7 @@ export default function Question({
     <div
       className={`${
         show ? "block" : "hidden"
-      } flex flex-row justify-center align-middle items-center gap-2 my-5`}
+      } flex flex-row justify-center align-middle items-center gap-3 my-5`}
     >
       <div className="relative w-full">
         <input
