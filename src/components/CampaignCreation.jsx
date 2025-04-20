@@ -25,7 +25,7 @@ function CampaignCreation() {
       <div>
         {/* Modal Header */}
         <div className="flex flex-col justify-between items-center mb-6">
-          <h2 className="text-4xl p-4 font-bold text-gray-800 dark:text-white">
+          <h2 className=" text-3xl sm:text-4xl text-center p-4 font-bold text-gray-800 dark:text-white">
             Create a New Campaign
           </h2>
           <p className="text-gray-800 dark:text-white text-center">
@@ -52,34 +52,33 @@ function CampaignCreation() {
             </p>
           </div>
           {/* Logo Upload */}
-          <div className="flex flex-row gap-5">
+          <div className="flex flex-col sm:flex-row gap-5">
             <img
               src="https://i.pravatar.cc/40"
               alt="Profile"
               className="w-20 h-20 rounded-full cursor-pointer border-2 border-gray-300 dark:border-gray-600"
-              onClick={() => setDropdownOpen((prev) => !prev)}
             />
-            <div className="flex flex-col">
-              <div className="flex felx-row items-start gap-1.5 mb-2">
+            <div className="flex flex-col w-full">
+              <div className="flex flex-row items-center gap-1.5 mb-2">
                 <label className="block font-medium text-gray-700 dark:text-gray-300">
                   Campaign logo <span className="text-orange-500">*</span>
                 </label>
-                <label className=" text-md text-gray-500 font-semibold">
+                <label className="text-md text-gray-500 font-semibold">
                   Default
                 </label>
-                <input className="mt-1.5" type="checkbox" checked />
+                <input className="mt-1.5" type="checkbox" checked={true} />
               </div>
               <input
                 type="file"
                 accept="image/*"
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+                className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 hover:cursor-pointer"
               />
             </div>
           </div>
           {/* Header Title */}
           <div>
             <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
-              Header Title *
+              Header Title <span className="text-orange-500">*</span>
             </label>
             <input
               type="text"
@@ -91,7 +90,7 @@ function CampaignCreation() {
           {/* Custom Message */}
           <div>
             <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
-              Your custom message *
+              Your custom message <span className="text-orange-500">*</span>
             </label>
             <textarea
               rows="3"
@@ -116,7 +115,10 @@ function CampaignCreation() {
             ))}
             {questions.length < 5 && (
               <div className="flex flex-row align-middle gap-2 my-5">
-                <CirclePlus color="#FFF" onClick={addQuestion} />
+                <CirclePlus
+                  className="hover:cursor-pointer  text-white hover:text-blue-500 dark:hover:text-blue-400"
+                  onClick={addQuestion}
+                />
                 <span className="text-gray-700 dark:text-gray-300">
                   Add one (up to 5)
                 </span>
@@ -135,18 +137,22 @@ function CampaignCreation() {
             </div>
           </div>
           {/* Collection Type */}
-          <div className="flex flex-row gap-10">
-            <div>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="w-full sm:w-1/2">
               <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
-                Collection Type
+                Collection Type<span className="text-orange-500"> *</span>
               </label>
-              <Dropdown label="Collection Type" dismissOnClick={false}>
+              <Dropdown
+                className="hover:cursor-pointer"
+                label="Collection Type"
+                dismissOnClick={true}
+              >
                 <DropdownItem>Text and Video</DropdownItem>
                 <DropdownItem>Text only</DropdownItem>
                 <DropdownItem>Video only</DropdownItem>
               </Dropdown>
             </div>
-            <div>
+            <div className="w-full sm:w-1/2">
               <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
                 Collect star ratings
               </label>
@@ -157,9 +163,9 @@ function CampaignCreation() {
           <div className="pt-4 flex justify-center">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+              className="w-full bg-blue-600 text-white text-lg font-bold px-6 py-2 rounded cursor-pointer hover:bg-blue-700"
             >
-              Create New Campaign
+              Create Campaign
             </button>
           </div>
         </form>

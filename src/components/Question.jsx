@@ -24,7 +24,7 @@ export default function Question({
     <div
       className={`${
         show ? "block" : "hidden"
-      } flex flex-row justify-center align-middle items-center gap-3 my-5`}
+      } flex flex-row justify-center align-middle items-center gap-3 mb-5`}
     >
       <div className="relative w-full">
         <input
@@ -39,7 +39,11 @@ export default function Question({
           {value.length}/{maxLength}
         </span>
       </div>
-      <Trash2 color="#FFF" size={30} onClick={handleOnClick} />
+      <Trash2
+        className=" text-white hover:cursor-pointer hover:text-red-500 dark:hover:text-red-400"
+        size={30}
+        onClick={handleOnClick}
+      />
     </div>
   );
 }

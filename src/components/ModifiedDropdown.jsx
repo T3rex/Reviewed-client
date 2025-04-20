@@ -13,7 +13,11 @@ function ModifiedDropdown() {
 
   return (
     <div>
-      <Dropdown label="Name, Email, Title, Social Link" dismissOnClick={false}>
+      <Dropdown
+        className="hover:cursor-pointer"
+        label="Name, Email, Title, Social Link"
+        dismissOnClick={false}
+      >
         <div className="w-72 p-3 space-y-2">
           {/* Name */}
           <div className="flex items-center justify-between">
@@ -48,7 +52,7 @@ function ModifiedDropdown() {
             <label className="flex items-center space-x-1">
               <input
                 type="checkbox"
-                checked={email}
+                checked={emailRequired}
                 className="form-checkbox h-4 w-4 text-blue-600"
                 disabled={false}
                 onChange={(e) => setEmailRequired(e.target.checked)}

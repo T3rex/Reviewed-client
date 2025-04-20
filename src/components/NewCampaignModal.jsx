@@ -14,22 +14,51 @@ function NewCampaignModal({ setShowModal }) {
         <div className="bg-white dark:bg-gray-900 p-10 rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] transition-all duration-300 overflow-y-auto no-scrollbar">
           <X
             onClick={() => setShowModal(false)}
-            className="sticky text-gray-500 hover:text-red-500 dark:hover:text-red-400"
+            className="sticky text-white hover:cursor-pointer hover:text-red-500 dark:hover:text-red-400"
           />
           <Preview />
-          <div className="flex justify-center my-5">
+          <div className="flex justify-center items-center my-5 mr-6">
             <ButtonGroup outline>
-              <Button onClick={() => setShowForm("Basic")}>
-                <Blocks className="me-2 h-4 w-4" />
-                Basic
+              <Button
+                className={`${
+                  showForm === "Basic"
+                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300"
+                    : ""
+                } hover:cursor-pointer`}
+                onClick={() => setShowForm("Basic")}
+              >
+                <Blocks className="me-2 h-4 w-4 " />
+                <p className="text-center text-sm sm:text-lg">Basic</p>
               </Button>
-              <Button onClick={() => setShowForm("ThankYou")}>
+              <Button
+                className={`${
+                  showForm === "ThankYouPage"
+                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300"
+                    : ""
+                }hover:cursor-pointer`}
+                onClick={() => setShowForm("ThankYouPage")}
+              >
                 <HandHeart className="me-2 h-4 w-4" />
-                Thank you page
+                <p className="text-center text-sm sm:text-lg">
+                  Thank you <span className="hidden sm:inline">page</span>
+                  <br className="sm:hidden" />
+                  <span className="sm:hidden">page</span>
+                </p>
               </Button>
-              <Button onClick={() => setShowForm("Settings")}>
-                <Settings className="me-3 h-4 w-4" />
-                Extra Settings
+              <Button
+                className={`${
+                  showForm === "Settings"
+                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300"
+                    : ""
+                }hover:cursor-pointer`}
+                onClick={() => setShowForm("Settings")}
+              >
+                <Settings className="me-2 h-4 w-4" />
+                <p className="text-center text-sm sm:text-lg">
+                  Extra <span className="hidden sm:inline">Settings</span>
+                  <br className="sm:hidden" />
+                  <span className="sm:hidden">Settings</span>
+                </p>
               </Button>
             </ButtonGroup>
           </div>
