@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import NewCampaign from "../components/NewCampaign";
+import NewCampaignModal from "./NewCampaignModal";
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
@@ -109,7 +109,7 @@ export default function Dashboard() {
             {/* Add more cards dynamically */}
           </div>
         </section>
-        {showModal && <NewCampaign setShowModal={setShowModal} />}
+        {showModal && <NewCampaignModal setShowModal={setShowModal} />}
       </main>
     </div>
   );
