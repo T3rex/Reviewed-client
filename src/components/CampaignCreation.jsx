@@ -21,149 +21,153 @@ function CampaignCreation() {
   };
 
   return (
-    <div>
-      <div>
-        {/* Modal Header */}
-        <div className="flex flex-col justify-between items-center mb-6">
-          <h2 className=" text-3xl sm:text-4xl text-center p-4 font-bold text-gray-800 dark:text-white">
-            Create a New Campaign
-          </h2>
-          <p className="text-gray-800 dark:text-white text-center">
-            After the Campaign is created, it will generate a dedicated page for
-            collecting testimonials.
-          </p>
-        </div>
-        {/* Form */}
-        <form className="space-y-5">
-          {/* Campaign name */}
+    <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-white">
+          Create a New Campaign
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 mt-2">
+          A dedicated testimonial collection page will be generated after
+          creation.
+        </p>
+      </div>
+
+      {/* Form Card */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-800 space-y-6">
+        <form className="space-y-6">
+          {/* Campaign Name */}
           <div>
-            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+            <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
               Campaign name <span className="text-orange-500">*</span>
             </label>
             <input
               type="text"
               placeholder="e.g. Product Feedback"
-              className="w-full p-2 rounded border dark:bg-gray-800 dark:text-white"
+              className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
               required
             />
             <p className="text-sm text-gray-500 mt-1">
-              Public URL will be:{" "}
+              Public URL:{" "}
               <span className="font-semibold">reviewed.com/your-campaign</span>
             </p>
           </div>
+
           {/* Logo Upload */}
-          <div className="flex flex-col sm:flex-row gap-5">
+          <div className="flex flex-col sm:flex-row gap-5 items-center">
             <img
               src="https://i.pravatar.cc/40"
-              alt="Profile"
-              className="w-20 h-20 rounded-full cursor-pointer border-2 border-gray-300 dark:border-gray-600"
+              alt="Logo"
+              className="w-20 h-20 rounded-full border-2 border-gray-300 dark:border-gray-600"
             />
-            <div className="flex flex-col w-full">
-              <div className="flex flex-row items-center gap-1.5 mb-2">
-                <label className="block font-medium text-gray-700 dark:text-gray-300">
+            <div className="w-full space-y-2">
+              <div className="flex items-center gap-3">
+                <label className="font-medium text-gray-700 dark:text-gray-300">
                   Campaign logo <span className="text-orange-500">*</span>
                 </label>
-                <label className="text-md text-gray-500 font-semibold">
+                <label className="text-sm text-gray-500 font-medium">
                   Default
                 </label>
-                <input className="mt-1.5" type="checkbox" checked={true} />
+                <input type="checkbox" checked className="ml-1" />
               </div>
               <input
                 type="file"
                 accept="image/*"
-                className="block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 hover:cursor-pointer"
+                className="block w-full text-white text-sm file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 hover:cursor-pointer hover:file:bg-primary-800 dark:file:bg-primary-700 dark:file:text-white hover:file:cursor-pointer"
               />
             </div>
           </div>
+
           {/* Header Title */}
           <div>
-            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+            <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
               Header Title <span className="text-orange-500">*</span>
             </label>
             <input
               type="text"
               placeholder="Would you like to give a shoutout?"
-              className="w-full p-2 rounded border dark:bg-gray-800 dark:text-white"
+              className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
               required
             />
           </div>
+
           {/* Custom Message */}
           <div>
-            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+            <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
               Your custom message <span className="text-orange-500">*</span>
             </label>
             <textarea
               rows="3"
               placeholder="Write a warm message and guide them on recording the testimonial..."
-              className="w-full p-2 rounded border dark:bg-gray-800 dark:text-white"
+              className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
             />
-            <p className="text-sm text-gray-500">Markdown supported</p>
+            <p className="text-sm text-gray-500 mt-1">Markdown supported</p>
           </div>
-          {/* Questions (up to 5) */}
+
+          {/* Questions */}
           <div>
-            <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+            <label className="block font-medium text-gray-700 dark:text-gray-300 mb-2">
               Questions (up to 5)
             </label>
-            {questions.map((question, index) => (
-              <Question
-                key={index}
-                defaultValue={question}
-                questions={questions}
-                index={index}
-                setQuestions={setQuestions}
-              />
-            ))}
-            {questions.length < 5 && (
-              <div className="flex flex-row align-middle gap-2 my-5">
-                <CirclePlus
-                  className="hover:cursor-pointer  text-white hover:text-blue-500 dark:hover:text-blue-400"
-                  onClick={addQuestion}
+            <div className="space-y-3">
+              {questions.map((question, index) => (
+                <Question
+                  key={index}
+                  defaultValue={question}
+                  questions={questions}
+                  index={index}
+                  setQuestions={setQuestions}
                 />
-                <span className="text-gray-700 dark:text-gray-300">
-                  Add one (up to 5)
-                </span>
-              </div>
-            )}
+              ))}
+              {questions.length < 5 && (
+                <div className="flex items-center gap-2 mt-3">
+                  <CirclePlus
+                    className="text-blue-600 hover:text-blue-800 dark:text-white dark:hover:text-blue-400 cursor-pointer"
+                    onClick={addQuestion}
+                  />
+                  <span className="text-gray-700 dark:text-gray-300 text-sm">
+                    Add one (up to 5)
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
+
           {/* Optional Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+              <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Collect extra info
               </label>
-              <div>
-                <ModifiedDropdown />
-              </div>
+              <ModifiedDropdown />
             </div>
           </div>
-          {/* Collection Type */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-1/2">
-              <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
-                Collection Type<span className="text-orange-500"> *</span>
+
+          {/* Collection Type & Stars */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Collection Type <span className="text-orange-500">*</span>
               </label>
-              <Dropdown
-                className="hover:cursor-pointer"
-                label="Collection Type"
-                dismissOnClick={true}
-              >
+              <Dropdown label="Select Type" dismissOnClick>
                 <DropdownItem>Text and Video</DropdownItem>
                 <DropdownItem>Text only</DropdownItem>
                 <DropdownItem>Video only</DropdownItem>
               </Dropdown>
             </div>
-            <div className="w-full sm:w-1/2">
-              <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">
+            <div>
+              <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Collect star ratings
               </label>
               <ToggleSwitch checked={collectStars} onChange={setCollectStars} />
             </div>
           </div>
-          {/* Bottom Buttons */}s
+
+          {/* Submit */}
           <div className="pt-4 flex justify-center">
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white text-lg font-bold px-6 py-2 rounded cursor-pointer hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold px-6 py-2 rounded-lg transition-colors"
             >
               Create Campaign
             </button>

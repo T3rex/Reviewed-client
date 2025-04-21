@@ -14,9 +14,10 @@ function ModifiedDropdown() {
   return (
     <div>
       <Dropdown
-        className="hover:cursor-pointer"
+        className="hover:cursor-pointer text-md p-5"
         label="Name, Email, Title, Social Link"
         dismissOnClick={false}
+        size="lg"
       >
         <div className="w-72 p-3 space-y-2">
           {/* Name */}

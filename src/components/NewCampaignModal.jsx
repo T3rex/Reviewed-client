@@ -5,6 +5,7 @@ import Preview from "./Preview";
 import { X, Blocks, HandHeart, Settings, MailPlus } from "lucide-react";
 import CampaignCreation from "./CampaignCreation";
 import { Button, ButtonGroup } from "flowbite-react";
+import ThankYouPage from "./ThankYouPage";
 
 function NewCampaignModal({ setShowModal }) {
   const [showForm, setShowForm] = useState("Basic");
@@ -22,7 +23,7 @@ function NewCampaignModal({ setShowModal }) {
               <Button
                 className={`${
                   showForm === "Basic"
-                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300"
+                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300 font-bold"
                     : ""
                 } hover:cursor-pointer`}
                 onClick={() => setShowForm("Basic")}
@@ -33,22 +34,21 @@ function NewCampaignModal({ setShowModal }) {
               <Button
                 className={`${
                   showForm === "ThankYouPage"
-                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300"
+                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300 font-bold"
                     : ""
-                }hover:cursor-pointer`}
+                } min-w-fit hover:cursor-pointer`}
                 onClick={() => setShowForm("ThankYouPage")}
               >
-                <HandHeart className="me-2 h-4 w-4" />
-                <p className="text-center text-sm sm:text-lg">
-                  Thank you <span className="hidden sm:inline">page</span>
-                  <br className="sm:hidden" />
-                  <span className="sm:hidden">page</span>
-                </p>
+                <HandHeart className="me-2 h-5 w-5" />
+                <div className="flex flex-col sm:flex-row text-center text-sm sm:text-lg gap-0 sm:gap-2">
+                  <span>Thank you</span>
+                  <span>page</span>
+                </div>
               </Button>
               <Button
                 className={`${
                   showForm === "Settings"
-                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300"
+                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300 font-bold"
                     : ""
                 }hover:cursor-pointer`}
                 onClick={() => setShowForm("Settings")}
@@ -63,6 +63,7 @@ function NewCampaignModal({ setShowModal }) {
             </ButtonGroup>
           </div>
           {showForm === "Basic" && <CampaignCreation />}
+          {showForm === "ThankYouPage" && <ThankYouPage />}
         </div>
       </div>
     </div>

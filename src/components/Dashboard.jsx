@@ -6,7 +6,7 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="min-h-fit bg-gray-50 dark:bg-gray-900 flex transition-all">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-all">
       {/* Sidebar */}
       <Sidebar />
       {/* Main Content */}

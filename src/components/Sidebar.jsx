@@ -8,7 +8,7 @@ function Sidebar() {
     <aside
       className={`${
         sidebarOpen ? "w-64 p-6" : "w-12 p-0"
-      } h-screen sticky bg-white dark:bg-gray-800 border-r dark:border-gray-700 shadow-sm transition-all duration-300 overflow-hidden`}
+      } mb-0 sticky bg-white dark:bg-gray-800 border-r dark:border-gray-700 shadow-sm transition-all duration-300 overflow-hidden`}
     >
       {/* Sidebar toggle button (only visible when closed) */}
       {!sidebarOpen && (
