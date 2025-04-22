@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 
 export default function Question({
-  maxLength = 100,
+  maxLength = 150,
   index,
   questions,
   setQuestions,
@@ -10,6 +10,16 @@ export default function Question({
 }) {
   const [value, setValue] = useState(questions[index]);
   const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    if (questions[index] !== value) {
+      setQuestions((prev) => {
+        const newQuestions = [...prev];
+        newQuestions[index] = value;
+        return newQuestions;
+      });
+    }
+  }, [value]);
 
   const handleOnClick = () => {
     setValue("");

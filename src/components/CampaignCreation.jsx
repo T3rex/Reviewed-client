@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Question from "./Question";
 import { CirclePlus } from "lucide-react";
 import ModifiedDropdown from "./ModifiedDropdown";
 import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
+import { useForm } from "react-hook-form";
 
 const defaultQuestions = [
   "Who are you / what are you working on?",
@@ -12,7 +13,36 @@ const defaultQuestions = [
 
 function CampaignCreation() {
   const [questions, setQuestions] = useState(defaultQuestions);
-  const [collectStars, setCollectStars] = useState(true);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      campaignName: "",
+      headerTitle: "",
+      customMessage: "",
+      imgSrc: "https://i.pravatar.cc/40",
+      collectStars: true,
+      file: null,
+      collectionType: "Select Type",
+    },
+  });
+
+  const onSubmit = (data) => {
+    data["questions"] = questions;
+    console.log(data);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setValue("imgSrc", imageUrl);
+    }
+  };
 
   const addQuestion = () => {
     if (questions.length < 5) {
@@ -35,7 +65,7 @@ function CampaignCreation() {
 
       {/* Form Card */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 border border-gray-100 dark:border-gray-800 space-y-6">
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {/* Campaign Name */}
           <div>
             <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -46,6 +76,7 @@ function CampaignCreation() {
               placeholder="e.g. Product Feedback"
               className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
               required
+              {...register("campaignName", { required: true })}
             />
             <p className="text-sm text-gray-500 mt-1">
               Public URL:{" "}
@@ -56,24 +87,34 @@ function CampaignCreation() {
           {/* Logo Upload */}
           <div className="flex flex-col sm:flex-row gap-5 items-center">
             <img
-              src="https://i.pravatar.cc/40"
               alt="Logo"
               className="w-20 h-20 rounded-full border-2 border-gray-300 dark:border-gray-600"
+              src={watch("imgSrc")}
             />
             <div className="w-full space-y-2">
               <div className="flex items-center gap-3">
                 <label className="font-medium text-gray-700 dark:text-gray-300">
                   Campaign logo <span className="text-orange-500">*</span>
                 </label>
-                <label className="text-sm text-gray-500 font-medium">
+                {/* <label className="text-sm text-gray-500 font-medium">
                   Default
                 </label>
-                <input type="checkbox" checked className="ml-1" />
+                <input
+                  type="checkbox"
+                  checked={defaultImage}
+                  onChange={() => handelDefaultCheckbox()}
+                  className="ml-1"
+                  {...register("defaultLogo")}
+                /> */}
               </div>
               <input
                 type="file"
                 accept="image/*"
                 className="block w-full text-white text-sm file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 hover:cursor-pointer hover:file:bg-primary-800 dark:file:bg-primary-700 dark:file:text-white hover:file:cursor-pointer"
+                {...register("file")}
+                onChange={(e) => {
+                  handleImageChange(e);
+                }}
               />
             </div>
           </div>
@@ -88,6 +129,7 @@ function CampaignCreation() {
               placeholder="Would you like to give a shoutout?"
               className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
               required
+              {...register("headerTitle", { required: true })}
             />
           </div>
 
@@ -100,6 +142,7 @@ function CampaignCreation() {
               rows="3"
               placeholder="Write a warm message and guide them on recording the testimonial..."
               className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
+              {...register("customMessage", { required: true })}
             />
             <p className="text-sm text-gray-500 mt-1">Markdown supported</p>
           </div>
@@ -149,17 +192,31 @@ function CampaignCreation() {
               <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Collection Type <span className="text-orange-500">*</span>
               </label>
-              <Dropdown label="Select Type" dismissOnClick>
-                <DropdownItem>Text and Video</DropdownItem>
-                <DropdownItem>Text only</DropdownItem>
-                <DropdownItem>Video only</DropdownItem>
+              <Dropdown label={watch("collectionType")} dismissOnClick>
+                {["Text only", "Video only", "Text and Video"].map((type) => {
+                  return (
+                    <DropdownItem
+                      key={type}
+                      onClick={() => setValue("collectionType", type)}
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      {type}
+                    </DropdownItem>
+                  );
+                })}
               </Dropdown>
             </div>
             <div>
               <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Collect star ratings
               </label>
-              <ToggleSwitch checked={collectStars} onChange={setCollectStars} />
+              <ToggleSwitch
+                {...register("collectStars")}
+                checked={watch("collectStars")}
+                onChange={() =>
+                  setValue("collectStars", !watch("collectStars"))
+                }
+              />
             </div>
           </div>
 

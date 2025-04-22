@@ -6,6 +6,7 @@ import { X, Blocks, HandHeart, Settings, MailPlus } from "lucide-react";
 import CampaignCreation from "./CampaignCreation";
 import { Button, ButtonGroup } from "flowbite-react";
 import ThankYouPage from "./ThankYouPage";
+import ExtraSettings from "./ExtraSettings";
 
 function NewCampaignModal({ setShowModal }) {
   const [showForm, setShowForm] = useState("Basic");
@@ -64,6 +65,7 @@ function NewCampaignModal({ setShowModal }) {
           </div>
           {showForm === "Basic" && <CampaignCreation />}
           {showForm === "ThankYouPage" && <ThankYouPage />}
+          {showForm === "Settings" && <ExtraSettings />}
         </div>
       </div>
     </div>

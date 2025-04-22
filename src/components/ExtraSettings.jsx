@@ -1,7 +1,11 @@
-import { useState } from "react";
+import ComingSoon from "./ComingSoon";
 
 function ExtraSettings() {
-  return <div></div>;
+  return (
+    <div>
+      <ComingSoon />
+    </div>
+  );
 }
 
 export default ExtraSettings;
