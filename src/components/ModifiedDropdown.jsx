@@ -1,15 +1,31 @@
 import { ToggleSwitch, Dropdown } from "flowbite-react";
-import { useState } from "react";
 
-function ModifiedDropdown() {
-  const [email, setEmail] = useState(true);
-  const [emailRequired, setEmailRequired] = useState(true);
+function ModifiedDropdown({ value, onChange }) {
+  const handleToggle = (key, toggleValue) => {
+    const updatedField = {
+      ...value[key],
+      enabled: toggleValue,
+      ...(toggleValue === false && { required: false }), // If disabling, also unset required
+    };
 
-  const [title, setTitle] = useState(false);
-  const [titleRequired, setTitleRequired] = useState(false);
+    onChange({
+      ...value,
+      [key]: updatedField,
+    });
+  };
 
-  const [socialLink, setSocialLink] = useState(false);
-  const [socialLinkRequired, setSocialLinkRequired] = useState(false);
+  const handleRequiredChange = (key, requiredValue) => {
+    const updatedField = {
+      ...value[key],
+      required: requiredValue,
+      ...(requiredValue === true && { enabled: true }), // If required, ensure enabled
+    };
+
+    onChange({
+      ...value,
+      [key]: updatedField,
+    });
+  };
 
   return (
     <div>
@@ -22,14 +38,18 @@ function ModifiedDropdown() {
         <div className="w-72 p-3 space-y-2">
           {/* Name */}
           <div className="flex items-center justify-between">
-            <ToggleSwitch checked={true} color="blue" disabled={true} />
+            <ToggleSwitch
+              checked={value.name.enabled}
+              color="blue"
+              disabled={true}
+            />
             <span className="text-md mr-auto ml-1 p-2 font-semibold text-gray-900 dark:text-gray-300">
               Name
             </span>
             <label className="flex items-center space-x-1">
               <input
                 type="checkbox"
-                checked={true}
+                checked={value.name.required}
                 className="form-checkbox h-4 w-4 text-blue-600"
                 disabled={true}
               />
@@ -42,10 +62,10 @@ function ModifiedDropdown() {
           {/* Email */}
           <div className="flex items-center justify-between">
             <ToggleSwitch
-              checked={email}
+              checked={value.email.enabled}
               color="blue"
               disabled={false}
-              onChange={setEmail}
+              onChange={(val) => handleToggle("email", val)}
             />
             <span className="text-md mr-auto ml-1 p-2 font-semibold text-gray-900 dark:text-gray-300">
               Email
@@ -53,10 +73,12 @@ function ModifiedDropdown() {
             <label className="flex items-center space-x-1">
               <input
                 type="checkbox"
-                checked={emailRequired}
+                checked={value.email.required}
                 className="form-checkbox h-4 w-4 text-blue-600"
                 disabled={false}
-                onChange={(e) => setEmailRequired(e.target.checked)}
+                onChange={(e) =>
+                  handleRequiredChange("email", e.target.checked)
+                }
               />
               <span className="text-sm font-semibold p-1 text-gray-900 dark:text-gray-300">
                 Required?
@@ -67,10 +89,10 @@ function ModifiedDropdown() {
           {/* Title */}
           <div className="flex items-center justify-between">
             <ToggleSwitch
-              checked={title}
+              checked={value.title.enabled}
               color="blue"
               disabled={false}
-              onChange={setTitle}
+              onChange={(val) => handleToggle("title", val)}
             />
             <span className="text-md mr-auto ml-1 p-2 font-semibold text-gray-900 dark:text-gray-300">
               Titile, Company
@@ -78,10 +100,12 @@ function ModifiedDropdown() {
             <label className="flex items-center space-x-1">
               <input
                 type="checkbox"
-                checked={titleRequired}
+                checked={value.title.required}
                 className="form-checkbox h-4 w-4 text-blue-600"
                 disabled={false}
-                onChange={(e) => setTitleRequired(e.target.checked)}
+                onChange={(e) =>
+                  handleRequiredChange("title", e.target.checked)
+                }
               />
               <span className="text-sm font-semibold p-1 text-gray-900 dark:text-gray-300">
                 Required?
@@ -92,10 +116,10 @@ function ModifiedDropdown() {
           {/* Social Link */}
           <div className="flex items-center justify-between">
             <ToggleSwitch
-              checked={socialLink}
+              checked={value.socialLink.enabled}
               color="blue"
               disabled={false}
-              onChange={setSocialLink}
+              onChange={(val) => handleToggle("socialLink", val)}
             />
             <span className="text-md mr-auto ml-1 p-2 font-semibold text-gray-900 dark:text-gray-300">
               Social Link
@@ -103,10 +127,12 @@ function ModifiedDropdown() {
             <label className="flex items-center space-x-1">
               <input
                 type="checkbox"
-                checked={socialLinkRequired}
+                checked={value.socialLink.required}
                 className="form-checkbox h-4 w-4 text-blue-600"
                 disabled={false}
-                onChange={(e) => setSocialLinkRequired(e.target.checked)}
+                onChange={(e) =>
+                  handleRequiredChange("socialLink", e.target.checked)
+                }
               />
               <span className="text-sm font-semibold p-1 text-gray-900 dark:text-gray-300">
                 Required?

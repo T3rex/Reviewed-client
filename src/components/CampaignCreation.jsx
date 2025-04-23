@@ -12,6 +12,12 @@ const defaultQuestions = [
 ];
 
 function CampaignCreation() {
+  const [extraInfo, setExtraInfo] = useState({
+    name: { enabled: true, required: true },
+    email: { enabled: false, required: false },
+    title: { enabled: false, required: false },
+    socialLink: { enabled: false, required: false },
+  });
   const [questions, setQuestions] = useState(defaultQuestions);
   const {
     register,
@@ -27,12 +33,13 @@ function CampaignCreation() {
       imgSrc: "https://i.pravatar.cc/40",
       collectStars: true,
       file: null,
-      collectionType: "Select Type",
+      collectionType: "Text Only",
     },
   });
 
   const onSubmit = (data) => {
     data["questions"] = questions;
+    data["extraInfo"] = extraInfo;
     console.log(data);
   };
 
@@ -182,7 +189,7 @@ function CampaignCreation() {
               <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Collect extra info
               </label>
-              <ModifiedDropdown />
+              <ModifiedDropdown value={extraInfo} onChange={setExtraInfo} />
             </div>
           </div>
 
