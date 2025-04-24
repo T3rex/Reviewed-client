@@ -5,6 +5,8 @@ import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
 
 function Applayout() {
   return (
@@ -27,6 +29,11 @@ const appRouter = createBrowserRouter([
         path: "/dashboard",
         element: <Dashboard />,
       },
+      {
+        path: "/signup",
+        element: <Signup />,
+      },
+      { path: "/login", element: <Login /> },
     ],
   },
 ]);
