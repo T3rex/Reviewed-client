@@ -1,8 +1,26 @@
 import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 export default function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/auth/logout",
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.data.success) {
+        setIsLoggedIn(false);
+        console.log("User logged out successfully");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -21,8 +39,7 @@ export default function Header() {
       <div className="text-xl font-bold text-gray-800 dark:text-white">
         MyBrand
       </div>
-
-      {/* Profile with dropdown */}
+      {/* Show only if logged in */}
       <div className="relative" ref={dropdownRef}>
         <img
           src="https://i.pravatar.cc/40"
@@ -46,6 +63,7 @@ export default function Header() {
               Settings
             </a>
             <a
+              onClick={() => handleLogout()}
               href="#"
               className="block px-4 py-2 text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600"
             >

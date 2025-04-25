@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
-import { navbarTheme } from "flowbite-react";
 
 let signupSchema = object({
   name: string().required("First name is required"),
@@ -23,17 +22,20 @@ function Signup() {
     resolver: yupResolver(signupSchema),
   });
 
-  const handleSingup = async (data) => {
+  const handleSignup = async (data) => {
     const response = await axios.post(
       "http://localhost:3000/api/v1/auth/signup",
-      data
+      data,
+      {
+        withCredentials: true,
+      }
     );
-    console.log(response);
+    console.log(response.data);
   };
 
   const onSubmit = (date) => {
     console.log(date);
-    handleSingup(date);
+    handleSignup(date);
   };
 
   return (
@@ -56,10 +58,12 @@ function Signup() {
               type="text"
               name="name"
               placeholder="Your Name"
-              required
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
               {...register("name", { required: true })}
             />
+            {errors.name && (
+              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+            )}
           </div>
 
           <div className="my-5">
@@ -67,14 +71,17 @@ function Signup() {
               Email <span className="text-orange-500">*</span>
             </label>
             <input
-              type="email"
               name="email"
               placeholder="you@example.com"
               autoComplete="email"
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
               {...register("email", { required: true })}
-              required
             />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div className="my-5">
@@ -88,8 +95,12 @@ function Signup() {
               autoComplete="new-password"
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
               {...register("password", { required: true })}
-              required
-            />
+            />{" "}
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <button

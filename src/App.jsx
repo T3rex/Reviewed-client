@@ -4,14 +4,17 @@ import { createRoot } from "react-dom/client";
 import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Signup from "./components/Signup";
-import Login from "./components/Login";
+import Signin from "./components/Signin";
+import AuthProvider from "./hooks/AuthProvider";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 function Applayout() {
   return (
     <>
       <Header />
+      <Toaster position="top-right" />
       <Outlet />
       <Footer />
     </>
@@ -21,7 +24,11 @@ function Applayout() {
 const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Applayout />,
+    element: (
+      <AuthProvider>
+        <Applayout />
+      </AuthProvider>
+    ),
     errorElement: <div>404 Not Found</div>,
 
     children: [
@@ -33,7 +40,7 @@ const appRouter = createBrowserRouter([
         path: "/signup",
         element: <Signup />,
       },
-      { path: "/login", element: <Login /> },
+      { path: "/signin", element: <Signin /> },
     ],
   },
 ]);
