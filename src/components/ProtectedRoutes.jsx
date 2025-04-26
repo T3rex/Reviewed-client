@@ -1,12 +1,18 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthProvider";
-import toast from "react-hot-toast";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth(); // <-- grab loading also
+
+  if (loading) {
+    return (
+      <div className="text-center text-white p-10">
+        Checking authentication...
+      </div>
+    ); // or a spinner
+  }
 
   if (!user) {
-    toast.error("You need to be logged in to access this page.");
     return <Navigate to="/signin" replace />;
   }
 

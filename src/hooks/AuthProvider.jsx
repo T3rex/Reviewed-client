@@ -1,12 +1,33 @@
 import { useNavigate } from "react-router-dom";
-import { useContext, createContext, useState } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // <-- NEW
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/v1/auth/status",
+          { withCredentials: true }
+        );
+        if (response?.data?.success) {
+          setUser(response.data.data.user);
+        }
+      } catch (error) {
+        console.error("Failed to check auth status:", error.message);
+      } finally {
+        setLoading(false); // <-- IMPORTANT: finish loading no matter what
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
 
   const signinAction = async (data) => {
     try {
@@ -47,7 +68,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signinAction, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signinAction, signOut }}>
       {children}
     </AuthContext.Provider>
   );

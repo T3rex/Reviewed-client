@@ -11,7 +11,9 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await user.signOut();
-      toast.success("You've been logged out. See you next time 👋"); // ✅ toast here
+      toast.success("You've been logged out. See you next time 👋", {
+        duration: 3000,
+      });
     } catch (error) {
       console.error("Error logging out:", error);
     }

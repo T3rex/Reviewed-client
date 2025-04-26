@@ -31,7 +31,6 @@ const appRouter = createBrowserRouter([
       </AuthProvider>
     ),
     errorElement: <div>404 Not Found</div>,
-
     children: [
       {
         path: "/dashboard",
@@ -50,6 +49,7 @@ const appRouter = createBrowserRouter([
   },
 ]);
 
+// index.js
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={appRouter} />

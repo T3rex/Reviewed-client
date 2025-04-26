@@ -24,7 +24,7 @@ function Signin() {
   const onSubmit = async (data) => {
     try {
       await user.signinAction(data);
-      toast.success("Welcome back! Great to see you 😊");
+      toast.success("Welcome back! Great to see you 😊", { duration: 3000 });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response.status === 401) {
