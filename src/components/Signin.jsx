@@ -1,4 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "../hooks/AuthProvider";
@@ -8,10 +8,7 @@ import axios from "axios";
 
 let signupSchema = object({
   email: string().email("Invalid email").required("Email is required"),
-  password: string()
-    .min(8, "Password must be at least 8 characters")
-    .max(20, "Password must not exceed 20 characters")
-    .required("Password is required"),
+  password: string().required("Password is required"),
 });
 
 function Signin() {
@@ -27,11 +24,11 @@ function Signin() {
   const onSubmit = async (data) => {
     try {
       await user.signinAction(data);
-      toast.success("Invalid email or password");
+      toast.success("Welcome back! Great to see you 😊");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response.status === 401) {
-          toast.error("Invalid email or password"); // ✅ toast here
+          toast.error("Invalid email or password");
         }
       } else {
         console.error("Unexpected error:", typeof error);
@@ -63,6 +60,11 @@ function Signin() {
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
               {...register("email", { required: true })}
             />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div className="w-full my-3">
@@ -77,6 +79,11 @@ function Signin() {
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"
               {...register("password", { required: true })}
             />
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <button

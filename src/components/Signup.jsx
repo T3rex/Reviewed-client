@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 let signupSchema = object({
   name: string().required("First name is required"),
@@ -22,15 +23,25 @@ function Signup() {
     resolver: yupResolver(signupSchema),
   });
 
+  const navigate = useNavigate();
+
   const handleSignup = async (data) => {
-    const response = await axios.post(
-      "http://localhost:3000/api/v1/auth/signup",
-      data,
-      {
+    try {
+      await axios.post("http://localhost:3000/api/v1/auth/signup", data, {
         withCredentials: true,
+      });
+      navigate("/dashboard");
+      toast.success("Welcome Aboard! Great to see you 😊");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response.status === 409) {
+          toast.error("Email already registered");
+        }
+      } else {
+        console.error("Unexpected error:", error);
+        toast.error("Something went wrong. Please try again.");
       }
-    );
-    console.log(response.data);
+    }
   };
 
   const onSubmit = (date) => {
@@ -112,7 +123,7 @@ function Signup() {
           <div>
             <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
               Already have an account?{" "}
-              <Link to={"/login"} className="text-blue-600 hover:underline">
+              <Link to={"/signin"} className="text-blue-600 hover:underline">
                 Sign in
               </Link>
             </p>

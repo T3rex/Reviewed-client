@@ -1,14 +1,15 @@
 import "./index.css";
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
-import AuthProvider from "./hooks/AuthProvider";
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { createRoot } from "react-dom/client";
+import Dashboard from "./components/Dashboard";
+import AuthProvider from "./hooks/AuthProvider";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 
 function Applayout() {
   return (
@@ -34,7 +35,11 @@ const appRouter = createBrowserRouter([
     children: [
       {
         path: "/dashboard",
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/signup",

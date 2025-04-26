@@ -1,9 +1,11 @@
 import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import NewCampaignModal from "./NewCampaignModal";
+import { useAuth } from "../hooks/AuthProvider";
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
+  const user = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-all">

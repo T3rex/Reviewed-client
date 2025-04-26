@@ -18,7 +18,6 @@ const AuthProvider = ({ children }) => {
         }
       );
       const res = response?.data;
-      console.log(res?.data?.user);
       if (res?.success) {
         setUser(res?.data?.user);
         navigate("/dashboard");
@@ -35,14 +34,16 @@ const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    setUser(null);
-    const response = await axios.get(
-      "http://localhost:3000/api/v1/auth/signout",
-      {
+    try {
+      setUser(null);
+      await axios.get("http://localhost:3000/api/v1/auth/signout", {
         withCredentials: true,
-      }
-    );
-    navigate("/signin");
+      });
+      navigate("/signin");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      throw new Error("Something went wrong. Please try again.");
+    }
   };
 
   return (
