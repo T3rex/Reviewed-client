@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error("Failed to check auth status:", error.message);
       } finally {
-        setLoading(false); // <-- IMPORTANT: finish loading no matter what
+        setLoading(false);
       }
     };
 

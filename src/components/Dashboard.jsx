@@ -1,11 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import NewCampaignModal from "./NewCampaignModal";
-import { useAuth } from "../hooks/AuthProvider";
+import axios from "axios";
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
-  const user = useAuth();
+  const [dashboardData, setDashboardData] = useState(null);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/dashboard/",
+        {
+          withCredentials: true,
+        }
+      );
+      setDashboardData(response?.data?.data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-all">
@@ -35,7 +54,7 @@ export default function Dashboard() {
               Total Reviews
             </p>
             <p className="text-2xl font-bold text-gray-800 dark:text-white">
-              128
+              {dashboardData?.totalReviews || 0}
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow">
@@ -43,14 +62,17 @@ export default function Dashboard() {
               Active Campaigns
             </p>
             <p className="text-2xl font-bold text-gray-800 dark:text-white">
-              5
+              {dashboardData?.activeCampaigns || 0}/
+              {dashboardData?.totalCampaigns || 0}
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Avg. Rating
             </p>
-            <p className="text-2xl font-bold text-yellow-500">⭐ 4.6</p>
+            <p className="text-2xl font-bold text-yellow-500">
+              ⭐ {dashboardData?.averageRating || 0}
+            </p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow">
             <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -66,23 +88,22 @@ export default function Dashboard() {
             Recent Campaigns
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Campaign 1
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Status: Active
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                Campaign 2
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Status: Completed
-              </p>
-            </div>
-            {/* Add more cards dynamically */}
+            {dashboardData?.recentCampaigns?.length > 0 &&
+              dashboardData?.recentCampaigns.map((campaign) => {
+                return (
+                  <div
+                    className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
+                    key={campaign?._id}
+                  >
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+                      {campaign?.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Status: {campaign?.status}
+                    </p>
+                  </div>
+                );
+              })}
           </div>
         </section>
 
@@ -92,23 +113,22 @@ export default function Dashboard() {
             Recent Testimonials
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow space-y-2">
-              <p className="text-gray-800 dark:text-white">
-                "Amazing product! Loved it."
-              </p>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                — John Doe
-              </div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow space-y-2">
-              <p className="text-gray-800 dark:text-white">
-                "Support was great and fast."
-              </p>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                — Jane Smith
-              </div>
-            </div>
-            {/* Add more cards dynamically */}
+            {dashboardData?.recentReviews?.length > 0 &&
+              dashboardData?.recentReviews.map((review) => {
+                return (
+                  <div
+                    className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow space-y-2"
+                    key={review?._id}
+                  >
+                    <p className="text-gray-800 dark:text-white">
+                      {review?.reviewText}
+                    </p>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      — {review?.reviewerName}
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         </section>
         {showModal && <NewCampaignModal setShowModal={setShowModal} />}
