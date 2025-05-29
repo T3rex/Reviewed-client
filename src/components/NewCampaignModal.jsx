@@ -3,13 +3,77 @@
 import { useState } from "react";
 import Preview from "./Preview";
 import { X, Blocks, HandHeart, Settings, MailPlus } from "lucide-react";
+import { useForm, FormProvider } from "react-hook-form";
+import axios from "axios";
+import toast from "react-hot-toast";
 import CampaignCreation from "./CampaignCreation";
 import { Button, ButtonGroup } from "flowbite-react";
 import ThankYouPage from "./ThankYouPage";
 import ExtraSettings from "./ExtraSettings";
 
+const defaultQuestions = [
+  "Who are you / what are you working on?",
+  "How has [our product/service] helped you?",
+  "What is the best thing about [our product/service]?",
+];
+
 function NewCampaignModal({ setShowModal }) {
   const [showForm, setShowForm] = useState("Basic");
+  const [questions, setQuestions] = useState(defaultQuestions);
+
+  const [extraInfo, setExtraInfo] = useState({
+    name: { enabled: true, required: true },
+    email: { enabled: false, required: false },
+    title: { enabled: false, required: false },
+    socialLink: { enabled: false, required: false },
+  });
+  const methods = useForm({
+    defaultValues: {
+      campaignName: "",
+      headerTitle: "",
+      customMessage: "",
+      campaignLogo: "https://i.pravatar.cc/40",
+      collectStars: true,
+      file: null,
+      collectionType: "Text Only",
+      thankImageUrl:
+        "https://media1.giphy.com/media/g9582DNuQppxC/giphy.gif?cid=ecf05e47ibtkj6mhht2m6gpzy157hwtxvlxlzqlijwrfqh8i&rid=giphy.gif",
+      thankTitle: "Thank you!",
+      thankMessage:
+        "Thank you so much for your shoutout! It means a ton for us! 🙏",
+      redirectUrl: "",
+      allowSMShare: false,
+    },
+  });
+
+  const onSubmit = (data) => {
+    data["questions"] = questions;
+    data["extraInfo"] = extraInfo;
+    createNewCampaign(data);
+  };
+
+  const createNewCampaign = async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/campaign",
+        data,
+        { withCredentials: true }
+      );
+      const res = response?.data;
+      if (res?.success) {
+        console.log("Campaign created successfully:", res.data);
+        toast.success("New Campaign Created ", {
+          duration: 3000,
+        });
+
+        // Redirect or show success message
+      } else {
+        console.error("Failed to create campaign:", res.message);
+      }
+    } catch (error) {
+      console.error("Error creating campaign:", error);
+    }
+  };
   return (
     <div>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -63,9 +127,31 @@ function NewCampaignModal({ setShowModal }) {
               </Button>
             </ButtonGroup>
           </div>
-          {showForm === "Basic" && <CampaignCreation />}
-          {showForm === "ThankYouPage" && <ThankYouPage />}
-          {showForm === "Settings" && <ExtraSettings />}
+          <FormProvider {...methods}>
+            <form
+              className="space-y-6"
+              onSubmit={methods.handleSubmit(onSubmit)}
+            >
+              {showForm === "Basic" && (
+                <CampaignCreation
+                  extraInfo={extraInfo}
+                  setExtraInfo={setExtraInfo}
+                  questions={questions}
+                  setQuestions={setQuestions}
+                />
+              )}
+              {showForm === "ThankYouPage" && <ThankYouPage />}
+              {showForm === "Settings" && <ExtraSettings />}
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="w-9/10 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold px-6 py-2 rounded-lg transition-colors"
+                >
+                  Create Campaign
+                </button>
+              </div>
+            </form>
+          </FormProvider>
         </div>
       </div>
     </div>

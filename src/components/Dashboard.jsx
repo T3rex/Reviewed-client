@@ -25,7 +25,6 @@ export default function Dashboard() {
     }
   };
 
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-all">
       {/* Sidebar */}
@@ -96,7 +95,7 @@ export default function Dashboard() {
                     key={campaign?._id}
                   >
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                      {campaign?.title}
+                      {campaign?.campaignName}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Status: {campaign?.status}
