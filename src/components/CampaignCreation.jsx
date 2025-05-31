@@ -3,12 +3,8 @@ import { CirclePlus } from "lucide-react";
 import ModifiedDropdown from "./ModifiedDropdown";
 import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
 import { useFormContext } from "react-hook-form";
-
-const defaultQuestions = [
-  "Who are you / what are you working on?",
-  "How has [our product/service] helped you?",
-  "What is the best thing about [our product/service]?",
-];
+import { ErrorMessage } from "@hookform/error-message";
+import toast from "react-hot-toast";
 
 function CampaignCreation({
   extraInfo,
@@ -61,12 +57,23 @@ function CampaignCreation({
             type="text"
             placeholder="e.g. Product Feedback"
             className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
-            required
-            {...register("campaignName", { required: true })}
+            {...register("campaignName", {
+              required: "Campaign name is required",
+            })}
+          />
+          <ErrorMessage
+            errors={errors}
+            name="campaignName"
+            render={({ message }) => {
+              toast.error(message);
+              return;
+            }}
           />
           <p className="text-sm text-gray-500 mt-1">
-            Public URL:{" "}
-            <span className="font-semibold">reviewed.com/your-campaign</span>
+            Public URL:
+            <span className="font-semibold">
+              reviewed.com/your-campaign/{watch("campaignName")}
+            </span>
           </p>
         </div>
 
@@ -82,16 +89,6 @@ function CampaignCreation({
               <label className="font-medium text-gray-700 dark:text-gray-300">
                 Campaign logo <span className="text-orange-500">*</span>
               </label>
-              {/* <label className="text-sm text-gray-500 font-medium">
-                  Default
-                </label>
-                <input
-                  type="checkbox"
-                  checked={defaultImage}
-                  onChange={() => handelDefaultCheckbox()}
-                  className="ml-1"
-                  {...register("defaultLogo")}
-                /> */}
             </div>
             <input
               type="file"
@@ -114,21 +111,30 @@ function CampaignCreation({
             type="text"
             placeholder="Would you like to give a shoutout?"
             className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
-            required
-            {...register("headerTitle", { required: true })}
+            {...register("headerTitle", {
+              required: "Header title is required",
+            })}
+          />
+          <ErrorMessage
+            errors={errors}
+            name="headerTitle"
+            render={({ message }) => {
+              toast.error(message);
+              return;
+            }}
           />
         </div>
 
         {/* Custom Message */}
         <div>
           <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Your custom message <span className="text-orange-500">*</span>
+            Your custom message
           </label>
           <textarea
             rows="3"
             placeholder="Write a warm message and guide them on recording the testimonial..."
             className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
-            {...register("customMessage", { required: true })}
+            {...register("customMessage")}
           />
           <p className="text-sm text-gray-500 mt-1">Markdown supported</p>
         </div>

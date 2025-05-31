@@ -35,7 +35,7 @@ function NewCampaignModal({ setShowModal }) {
       campaignLogo: "https://i.pravatar.cc/40",
       collectStars: true,
       file: null,
-      collectionType: "Text Only",
+      collectionType: "Text only",
       thankImageUrl:
         "https://media1.giphy.com/media/g9582DNuQppxC/giphy.gif?cid=ecf05e47ibtkj6mhht2m6gpzy157hwtxvlxlzqlijwrfqh8i&rid=giphy.gif",
       thankTitle: "Thank you!",
@@ -61,12 +61,9 @@ function NewCampaignModal({ setShowModal }) {
       );
       const res = response?.data;
       if (res?.success) {
-        console.log("Campaign created successfully:", res.data);
-        toast.success("New Campaign Created ", {
+        toast.success("Campaign created successfully 🎉", {
           duration: 3000,
         });
-
-        // Redirect or show success message
       } else {
         console.error("Failed to create campaign:", res.message);
       }
@@ -75,84 +72,94 @@ function NewCampaignModal({ setShowModal }) {
     }
   };
   return (
-    <div>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-        <div className="bg-white dark:bg-gray-900 p-10 rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] transition-all duration-300 overflow-y-auto no-scrollbar">
-          <X
-            onClick={() => setShowModal(false)}
-            className="sticky text-white hover:cursor-pointer hover:text-red-500 dark:hover:text-red-400"
-          />
-          <Preview />
-          <div className="flex justify-center items-center my-5 mr-6">
-            <ButtonGroup outline>
-              <Button
-                className={`${
-                  showForm === "Basic"
-                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300 font-bold"
-                    : ""
-                } hover:cursor-pointer`}
-                onClick={() => setShowForm("Basic")}
-              >
-                <Blocks className="me-2 h-4 w-4 " />
-                <p className="text-center text-sm sm:text-lg">Basic</p>
-              </Button>
-              <Button
-                className={`${
-                  showForm === "ThankYouPage"
-                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300 font-bold"
-                    : ""
-                } min-w-fit hover:cursor-pointer`}
-                onClick={() => setShowForm("ThankYouPage")}
-              >
-                <HandHeart className="me-2 h-5 w-5" />
-                <div className="flex flex-col sm:flex-row text-center text-sm sm:text-lg gap-0 sm:gap-2">
-                  <span>Thank you</span>
-                  <span>page</span>
-                </div>
-              </Button>
-              <Button
-                className={`${
-                  showForm === "Settings"
-                    ? "border-primary-800 bg-primary-800 text-white ring-primary-300 font-bold"
-                    : ""
-                }hover:cursor-pointer`}
-                onClick={() => setShowForm("Settings")}
-              >
-                <Settings className="me-2 h-4 w-4" />
-                <p className="text-center text-sm sm:text-lg">
-                  Extra <span className="hidden sm:inline">Settings</span>
-                  <br className="sm:hidden" />
-                  <span className="sm:hidden">Settings</span>
-                </p>
-              </Button>
-            </ButtonGroup>
-          </div>
-          <FormProvider {...methods}>
-            <form
-              className="space-y-6"
-              onSubmit={methods.handleSubmit(onSubmit)}
-            >
-              {showForm === "Basic" && (
-                <CampaignCreation
-                  extraInfo={extraInfo}
-                  setExtraInfo={setExtraInfo}
-                  questions={questions}
-                  setQuestions={setQuestions}
-                />
-              )}
-              {showForm === "ThankYouPage" && <ThankYouPage />}
-              {showForm === "Settings" && <ExtraSettings />}
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  className="w-9/10 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold px-6 py-2 rounded-lg transition-colors"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className=" relative bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-y-auto no-scrollbar p-6 sm:p-10 transition-all duration-300">
+        {/* Close Button */}
+        <button
+          onClick={() => setShowModal(false)}
+          className="absolute top-4 right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
+          aria-label="Close modal"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+        <FormProvider {...methods}>
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Preview Section */}
+            <div className="lg:w-4/10">
+              <Preview questions={questions} />
+            </div>
+
+            {/* Form Section */}
+            <div className="lg:w-6/10 w-full">
+              {/* Button Tabs */}
+              <div className="flex flex-wrap justify-center mb-6">
+                <Button
+                  className={`rounded-l-lg rounded-r-none flex items-center gap-2 px-4 py-2 border transition ${
+                    showForm === "Basic"
+                      ? "bg-primary-800 text-white ring-2 ring-primary-300"
+                      : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300"
+                  }`}
+                  onClick={() => setShowForm("Basic")}
                 >
-                  Create Campaign
-                </button>
+                  <Blocks className="w-5 h-5" />
+                  <span className="text-sm sm:text-base">Basic</span>
+                </Button>
+
+                <Button
+                  className={`rounded-none flex items-center gap-2 px-4py-2 border transition ${
+                    showForm === "ThankYouPage"
+                      ? "bg-primary-800 text-white ring-2 ring-primary-300"
+                      : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300"
+                  }`}
+                  onClick={() => setShowForm("ThankYouPage")}
+                >
+                  <HandHeart className="w-5 h-5" />
+                  <span className="text-sm sm:text-base">Thank You Page</span>
+                </Button>
+
+                <Button
+                  className={` rounded-l-none rounded-r-lg flex items-center gap-2 px-4 py-2 border transition ${
+                    showForm === "Settings"
+                      ? "bg-primary-800 text-white ring-2 ring-primary-300"
+                      : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300"
+                  }`}
+                  onClick={() => setShowForm("Settings")}
+                >
+                  <Settings className="w-5 h-5" />
+                  <span className="text-sm sm:text-base">Extra Settings</span>
+                </Button>
               </div>
-            </form>
-          </FormProvider>
-        </div>
+
+              {/* Form Content */}
+              <form
+                onSubmit={methods.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                {showForm === "Basic" && (
+                  <CampaignCreation
+                    extraInfo={extraInfo}
+                    setExtraInfo={setExtraInfo}
+                    questions={questions}
+                    setQuestions={setQuestions}
+                  />
+                )}
+                {showForm === "ThankYouPage" && <ThankYouPage />}
+                {showForm === "Settings" && <ExtraSettings />}
+
+                {/* Submit Button */}
+                <div className="flex justify-center pt-4">
+                  <button
+                    type="submit"
+                    className="w-full sm:w-9/10 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-md transition"
+                  >
+                    Create Campaign
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </FormProvider>
       </div>
     </div>
   );
