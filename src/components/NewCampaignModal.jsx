@@ -1,15 +1,16 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 import Preview from "./Preview";
-import { X, Blocks, HandHeart, Settings, MailPlus } from "lucide-react";
-import { useForm, FormProvider } from "react-hook-form";
-import axios from "axios";
 import toast from "react-hot-toast";
-import CampaignCreation from "./CampaignCreation";
-import { Button, ButtonGroup } from "flowbite-react";
+import { Button } from "flowbite-react";
 import ThankYouPage from "./ThankYouPage";
 import ExtraSettings from "./ExtraSettings";
+import ThankPreview from "./ThankPreview";
+import CampaignCreation from "./CampaignCreation";
+import { useForm, FormProvider } from "react-hook-form";
+import { X, Blocks, HandHeart, Settings } from "lucide-react";
 
 const defaultQuestions = [
   "Who are you / what are you working on?",
@@ -38,9 +39,8 @@ function NewCampaignModal({ setShowModal }) {
       collectionType: "Text only",
       thankImageUrl:
         "https://media1.giphy.com/media/g9582DNuQppxC/giphy.gif?cid=ecf05e47ibtkj6mhht2m6gpzy157hwtxvlxlzqlijwrfqh8i&rid=giphy.gif",
-      thankTitle: "Thank you!",
-      thankMessage:
-        "Thank you so much for your shoutout! It means a ton for us! 🙏",
+      thankTitle: "",
+      thankMessage: "",
       redirectUrl: "",
       allowSMShare: false,
     },
@@ -77,7 +77,7 @@ function NewCampaignModal({ setShowModal }) {
         {/* Close Button */}
         <button
           onClick={() => setShowModal(false)}
-          className="absolute top-4 right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
+          className="absolute top-4  right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
           aria-label="Close modal"
         >
           <X className="w-6 h-6" />
@@ -87,13 +87,14 @@ function NewCampaignModal({ setShowModal }) {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Preview Section */}
             <div className="lg:w-4/10">
-              <Preview questions={questions} />
+              {showForm === "Basic" && <Preview questions={questions} />}
+              {showForm === "ThankYouPage" && <ThankPreview />}
             </div>
 
             {/* Form Section */}
             <div className="lg:w-6/10 w-full">
               {/* Button Tabs */}
-              <div className="flex flex-wrap justify-center mb-6">
+              <div className="flex flex-wrap justify-center mb-6 ">
                 <Button
                   className={`rounded-l-lg rounded-r-none flex items-center gap-2 px-4 py-2 border transition ${
                     showForm === "Basic"

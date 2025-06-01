@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import NewCampaignModal from "./NewCampaignModal";
 import axios from "axios";
+import CampaignCard from "./CampaignCard";
 
 export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
@@ -89,19 +90,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {dashboardData?.recentCampaigns?.length > 0 &&
               dashboardData?.recentCampaigns.map((campaign) => {
-                return (
-                  <div
-                    className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
-                    key={campaign?._id}
-                  >
-                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                      {campaign?.campaignName}
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Status: {campaign?.status}
-                    </p>
-                  </div>
-                );
+                return <CampaignCard campaign={campaign} />;
               })}
           </div>
         </section>

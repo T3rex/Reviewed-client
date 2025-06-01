@@ -56,7 +56,8 @@ function CampaignCreation({
           <input
             type="text"
             placeholder="e.g. Product Feedback"
-            className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
+            className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white "
+            maxLength={50}
             {...register("campaignName", {
               required: "Campaign name is required",
             })}
@@ -110,6 +111,7 @@ function CampaignCreation({
           <input
             type="text"
             placeholder="Would you like to give a shoutout?"
+            maxLength={50}
             className="w-full p-2 rounded-lg border dark:bg-gray-800 dark:text-white"
             {...register("headerTitle", {
               required: "Header title is required",

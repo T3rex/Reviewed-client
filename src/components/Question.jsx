@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 
 export default function Question({
-  maxLength = 150,
+  maxLength = 100,
   index,
   questions,
   setQuestions,

@@ -1,5 +1,6 @@
-import { Star } from "lucide-react";
+import { Video, PencilLine } from "lucide-react";
 import { useFormContext } from "react-hook-form";
+import StarRating from "./StarRating";
 
 function Preview({ questions }) {
   const { watch } = useFormContext();
@@ -18,7 +19,7 @@ function Preview({ questions }) {
         className="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gray-300 dark:border-gray-600 transition-all duration-300"
       />
 
-      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 transition-all">
+      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 break-words transition-all">
         {watch("headerTitle") || "Header goes here..."}
       </h3>
 
@@ -31,19 +32,7 @@ function Preview({ questions }) {
           <p className="text-sm text-gray-500 dark:text-gray-300 mb-1">
             Rate us
           </p>
-          <div className="flex justify-center items-center gap-1 mb-4">
-            {[...Array(5)].map((_, i) => (
-              <label>
-                <input className="hidden" type="radio" />
-                <Star
-                  key={i}
-                  size={20}
-                  className="text-yellow-400"
-                  fill="currentColor"
-                />
-              </label>
-            ))}
-          </div>
+          <StarRating />
         </div>
       )}
 
@@ -64,14 +53,16 @@ function Preview({ questions }) {
 
       {(collectionType === "Video only" ||
         collectionType === "Text and Video") && (
-        <button className="w-full mb-3 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-300">
+        <button className="w-full my-5 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-300">
+          <Video className="inline w-5 mr-2" color="white" />
           Record Video
         </button>
       )}
 
       {(collectionType === "Text only" ||
         collectionType === "Text and Video") && (
-        <button className="w-full px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-300">
+        <button className="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all duration-300">
+          <PencilLine className="inline w-5 mr-2" color="white" />
           Send in Text
         </button>
       )}
