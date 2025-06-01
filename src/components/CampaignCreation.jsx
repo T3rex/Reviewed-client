@@ -5,6 +5,7 @@ import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
 import { useFormContext } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 function CampaignCreation({
   extraInfo,
@@ -60,8 +61,23 @@ function CampaignCreation({
             maxLength={50}
             {...register("campaignName", {
               required: "Campaign name is required",
+              validate: async (value) => {
+                try {
+                  const response = await axios.post(
+                    "http://localhost:3000/api/v1/campaign/check-availability",
+                    { campaignName: value },
+                    { withCredentials: true }
+                  );
+                  const isAvailable = response.data.isAvailable;
+                  return isAvailable || "Campaign name is already taken";
+                } catch (error) {
+                  console.error("Error checking campaign name:", error);
+                  return "Error validating campaign name";
+                }
+              },
             })}
           />
+
           <ErrorMessage
             errors={errors}
             name="campaignName"

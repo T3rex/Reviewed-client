@@ -90,7 +90,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {dashboardData?.recentCampaigns?.length > 0 &&
               dashboardData?.recentCampaigns.map((campaign) => {
-                return <CampaignCard campaign={campaign} />;
+                return <CampaignCard key={campaign._id} campaign={campaign} />;
               })}
           </div>
         </section>

@@ -51,7 +51,5 @@ const appRouter = createBrowserRouter([
 
 // index.js
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={appRouter} />
-  </StrictMode>
+  <RouterProvider router={appRouter} />
 );
