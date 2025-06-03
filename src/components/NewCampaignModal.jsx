@@ -18,7 +18,7 @@ const defaultQuestions = [
   "What is the best thing about [our product/service]?",
 ];
 
-function NewCampaignModal({ setShowModal }) {
+function NewCampaignModal({ setshowCampaignModal, setshowSucessModal }) {
   const [showForm, setShowForm] = useState("Basic");
   const [questions, setQuestions] = useState(defaultQuestions);
 
@@ -64,19 +64,24 @@ function NewCampaignModal({ setShowModal }) {
         toast.success("Campaign created successfully 🎉", {
           duration: 3000,
         });
+        setshowCampaignModal(false);
+        setshowSucessModal(true);
       } else {
         console.error("Failed to create campaign:", res.message);
       }
     } catch (error) {
+      toast.error("Something went wrong try again!! ", {
+        duration: 3000,
+      });
       console.error("Error creating campaign:", error);
     }
   };
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
       <div className=" relative bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-y-auto no-scrollbar p-6 sm:p-10 transition-all duration-300">
         {/* Close Button */}
         <button
-          onClick={() => setShowModal(false)}
+          onClick={() => setshowCampaignModal(false)}
           className="absolute top-4  right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
           aria-label="Close modal"
         >

@@ -3,9 +3,11 @@ import Sidebar from "../components/Sidebar";
 import NewCampaignModal from "./NewCampaignModal";
 import axios from "axios";
 import CampaignCard from "./CampaignCard";
+import SuccessModal from "./SuccessModal";
 
 export default function Dashboard() {
-  const [showModal, setShowModal] = useState(false);
+  const [showCampaignModal, setshowCampaignModal] = useState(false);
+  const [showSucessModal, setshowSucessModal] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function Dashboard() {
           </div>
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition"
-            onClick={() => setShowModal(true)}
+            onClick={() => setshowCampaignModal(true)}
           >
             + New Campaign
           </button>
@@ -119,7 +121,15 @@ export default function Dashboard() {
               })}
           </div>
         </section>
-        {showModal && <NewCampaignModal setShowModal={setShowModal} />}
+        {showCampaignModal && (
+          <NewCampaignModal
+            setshowCampaignModal={setshowCampaignModal}
+            setshowSucessModal={setshowSucessModal}
+          />
+        )}
+        {showSucessModal && (
+          <SuccessModal setshowSucessModal={setshowSucessModal} />
+        )}
       </main>
     </div>
   );
