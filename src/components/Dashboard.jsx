@@ -1,19 +1,29 @@
-import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import NewCampaignModal from "./NewCampaignModal";
 import axios from "axios";
+import toast from "react-hot-toast";
 import CampaignCard from "./CampaignCard";
-import SuccessModal from "./SuccessModal";
+import { RefreshCcw } from "lucide-react";
+import Sidebar from "../components/Sidebar";
+import { useEffect, useState } from "react";
+import NewCampaignModal from "./NewCampaignModal";
 
 export default function Dashboard() {
   const [showCampaignModal, setshowCampaignModal] = useState(false);
-  const [showSucessModal, setshowSucessModal] = useState(true);
   const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
+  const handleRefresh = () => {
+    try {
+      fetchDashboardData();
+      toast.success("Dashboard refreshed!");
+    } catch (error) {
+      console.error("Error refreshing dashboard data:", error);
+      toast.error("Failed to refresh dashboard data.");
+      return;
+    }
+  };
   const fetchDashboardData = async () => {
     try {
       const response = await axios.get(
@@ -41,12 +51,20 @@ export default function Dashboard() {
               Overview
             </h1>
           </div>
-          <button
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition"
-            onClick={() => setshowCampaignModal(true)}
-          >
-            + New Campaign
-          </button>
+          <div className="flex items-center gap-3">
+            <div
+              className="p-2 bg-white dark:bg-gray-600 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+              onClick={handleRefresh}
+            >
+              <RefreshCcw color="green" rotate={90} />
+            </div>
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition"
+              onClick={() => setshowCampaignModal(true)}
+            >
+              + New Campaign
+            </button>
+          </div>
         </div>
 
         {/* Stats Section */}
@@ -122,13 +140,7 @@ export default function Dashboard() {
           </div>
         </section>
         {showCampaignModal && (
-          <NewCampaignModal
-            setshowCampaignModal={setshowCampaignModal}
-            setshowSucessModal={setshowSucessModal}
-          />
-        )}
-        {showSucessModal && (
-          <SuccessModal setshowSucessModal={setshowSucessModal} />
+          <NewCampaignModal setshowCampaignModal={setshowCampaignModal} />
         )}
       </main>
     </div>
