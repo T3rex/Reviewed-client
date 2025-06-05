@@ -6,12 +6,15 @@ import { useFormContext } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useEffect } from "react";
 
 function CampaignCreation({
   extraInfo,
   setExtraInfo,
   questions,
   setQuestions,
+  mode,
+  campaignId,
 }) {
   const {
     register,
@@ -33,6 +36,12 @@ function CampaignCreation({
       setQuestions((prev) => [...prev, ""]);
     }
   };
+
+  useEffect(() => {
+    if (errors?.campaignName?.message) {
+      toast.error(errors.campaignName.message);
+    }
+  }, [errors?.campaignName]);
 
   return (
     <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -68,8 +77,17 @@ function CampaignCreation({
                     { campaignName: value },
                     { withCredentials: true }
                   );
-                  const isAvailable = response.data.isAvailable;
-                  return isAvailable || "Campaign name is already taken";
+                  const savedCampaignId = response.data.campaignId._id;
+                  if (mode === "create") {
+                    return savedCampaignId && "Campaign name is already taken";
+                  }
+                  if (mode === "edit") {
+                    console.log("Saved Campaign ID:", savedCampaignId._id);
+                    console.log("Current Campaign ID:", campaignId);
+                    return savedCampaignId == campaignId
+                      ? true
+                      : "Campaign name is already taken";
+                  }
                 } catch (error) {
                   console.error("Error checking campaign name:", error);
                   return "Error validating campaign name";
@@ -82,7 +100,6 @@ function CampaignCreation({
             errors={errors}
             name="campaignName"
             render={({ message }) => {
-              toast.error(message);
               return;
             }}
           />

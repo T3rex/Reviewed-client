@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 function SuccessModal({
+  mode,
   setshowSucessModal,
   setshowCampaignModal,
   submissionLink,
+  setShowEditModal,
 }) {
+  console.log("Submission Link:", submissionLink);
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(submissionLink);
@@ -19,7 +22,7 @@ function SuccessModal({
 
   const handleClose = () => {
     setshowSucessModal(false);
-    setshowCampaignModal(false);
+    mode === "create" ? setshowCampaignModal(false) : setShowEditModal(false);
   };
 
   return (
@@ -28,7 +31,7 @@ function SuccessModal({
         {/* Close Button (top right) */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
+          className="absolute cursor-pointer top-4 right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
           aria-label="Close modal"
         >
           <X className="w-6 h-6" />
@@ -43,7 +46,8 @@ function SuccessModal({
           />
 
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
-            Campaign Created Successfully! 🎉
+            Campaign {mode === "created" ? "Created" : "Updated"} Successfully!
+            🎉
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
@@ -56,11 +60,11 @@ function SuccessModal({
               type="text"
               value={submissionLink}
               readOnly
-              className="w-full p-2 text-sm text-gray-700 dark:text-white bg-transparent outline-none"
+              className="w-full overflow-scroll p-2 text-sm text-gray-700 dark:text-white bg-transparent outline-none"
             />
             <button
               onClick={handleCopy}
-              className="px-3 py-2 text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"
+              className="px-3 cursor-pointer py-2 text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"
               title="Copy to clipboard"
             >
               <Copy className="w-5 h-5" />

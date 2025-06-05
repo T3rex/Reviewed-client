@@ -12,6 +12,7 @@ import ThankPreview from "./ThankPreview";
 import CampaignCreation from "./CampaignCreation";
 import { useForm, FormProvider } from "react-hook-form";
 import { X, Blocks, HandHeart, Settings } from "lucide-react";
+import { useEffect } from "react";
 
 const defaultQuestions = [
   "Who are you / what are you working on?",
@@ -19,18 +20,50 @@ const defaultQuestions = [
   "What is the best thing about [our product/service]?",
 ];
 
-function NewCampaignModal({ setshowCampaignModal }) {
+const defaultExtraInfo = {
+  name: { enabled: true, required: true },
+  email: { enabled: false, required: false },
+  title: { enabled: false, required: false },
+  socialLink: { enabled: false, required: false },
+};
+
+function NewCampaignModal({
+  setshowCampaignModal,
+  campaignId,
+  mode,
+  setShowEditModal,
+}) {
   const [showForm, setShowForm] = useState("Basic");
   const [questions, setQuestions] = useState(defaultQuestions);
   const [showSucessModal, setshowSucessModal] = useState(false);
   const [submissionLink, setSubmissionLink] = useState("");
 
-  const [extraInfo, setExtraInfo] = useState({
-    name: { enabled: true, required: true },
-    email: { enabled: false, required: false },
-    title: { enabled: false, required: false },
-    socialLink: { enabled: false, required: false },
-  });
+  const [extraInfo, setExtraInfo] = useState(defaultExtraInfo);
+
+  useEffect(() => {
+    if (mode == "edit" && campaignId) {
+      console.log(campaignId);
+      const fetchCampaignData = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/api/v1/campaign/${campaignId}`,
+            {
+              withCredentials: true,
+            }
+          );
+          const campaign = response?.data?.data;
+          methods.reset(campaign);
+          setQuestions(campaign?.questions || defaultQuestions);
+          setExtraInfo(campaign?.extraInfo || defaultExtraInfo);
+          setShowForm("Basic");
+        } catch (error) {
+          console.log("Error fetching campaign data:", error);
+        }
+      };
+      fetchCampaignData();
+    }
+  }, [mode, campaignId]);
+
   const methods = useForm({
     defaultValues: {
       campaignName: "",
@@ -52,27 +85,31 @@ function NewCampaignModal({ setshowCampaignModal }) {
   const onSubmit = (data) => {
     data["questions"] = questions;
     data["extraInfo"] = extraInfo;
-    createNewCampaign(data);
+    submitForm(data);
   };
 
-  const createNewCampaign = async (data) => {
+  const submitForm = async (data) => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/campaign",
-        data,
-        { withCredentials: true }
-      );
+      const method = mode === "edit" ? axios.put : axios.post;
+      const endpoint =
+        mode === "edit"
+          ? `http://localhost:3000/api/v1/campaign/${campaignId}`
+          : "http://localhost:3000/api/v1/campaign";
+
+      const response = await method(endpoint, data, { withCredentials: true });
       const res = response?.data;
       if (res?.success) {
-        console.log("Campaign created successfully:", res);
-        toast.success("Campaign created successfully 🎉", {
-          duration: 3000,
-        });
-        // setshowCampaignModal(false);
+        mode === "edit"
+          ? toast.success("Campaign updated successfully 🎉", {
+              duration: 3000,
+            })
+          : toast.success("Campaign created successfully 🎉", {
+              duration: 3000,
+            });
         setSubmissionLink("http://reviewed.com/" + res?.submissionLink);
         setshowSucessModal(true);
       } else {
-        console.error("Failed to create campaign:", res.message);
+        console.error("Failed to create/edit campaign:", res.message);
       }
     } catch (error) {
       toast.error("Something went wrong try again!! ", {
@@ -81,6 +118,7 @@ function NewCampaignModal({ setshowCampaignModal }) {
       console.error("Error creating campaign:", error);
     }
   };
+
   return (
     <>
       {!showSucessModal ? (
@@ -88,7 +126,11 @@ function NewCampaignModal({ setshowCampaignModal }) {
           <div className=" relative bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-7xl max-h-[90vh] overflow-y-auto no-scrollbar p-6 sm:p-10 transition-all duration-300">
             {/* Close Button */}
             <button
-              onClick={() => setshowCampaignModal(false)}
+              onClick={() =>
+                mode == "create"
+                  ? setshowCampaignModal(false)
+                  : setShowEditModal(false)
+              }
               className="absolute top-4  right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
               aria-label="Close modal"
             >
@@ -155,6 +197,8 @@ function NewCampaignModal({ setshowCampaignModal }) {
                   >
                     {showForm === "Basic" && (
                       <CampaignCreation
+                        mode={mode}
+                        campaignId={campaignId}
                         extraInfo={extraInfo}
                         setExtraInfo={setExtraInfo}
                         questions={questions}
@@ -169,8 +213,11 @@ function NewCampaignModal({ setshowCampaignModal }) {
                       <button
                         type="submit"
                         className="w-full sm:w-9/10 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-md transition"
+                        disabled={methods.formState.isSubmitting}
                       >
-                        Create Campaign
+                        {mode === "create"
+                          ? "Create Campaign"
+                          : "Update Campaign"}
                       </button>
                     </div>
                   </form>
@@ -182,8 +229,10 @@ function NewCampaignModal({ setshowCampaignModal }) {
       ) : (
         <FormProvider {...methods}>
           <SuccessModal
+            mode={mode}
             setshowSucessModal={setshowSucessModal}
             setshowCampaignModal={setshowCampaignModal}
+            setShowEditModal={setShowEditModal}
             submissionLink={submissionLink}
           />
         </FormProvider>

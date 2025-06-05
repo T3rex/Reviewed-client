@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import {
   Ellipsis,
   ListTodo,
@@ -8,8 +8,33 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { Dropdown, DropdownItem, DropdownDivider } from "flowbite-react";
+import toast from "react-hot-toast";
+import axios from "axios";
+import NewCampaignModal from "./NewCampaignModal";
+import { set } from "react-hook-form";
 
 function CampaignCard({ campaign }) {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const handleEditCampaign = () => {
+    setShowEditModal(true);
+  };
+
+  const handleGetCampaignLink = async (campaignId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/campaign/submission-link/${campaignId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      navigator.clipboard.writeText(response?.data?.data);
+      toast.success("Campaign link copied to clipboard!");
+    } catch (error) {
+      console.error("Error getting campaign link:", error);
+      toast.error("Failed to get campaign link.");
+    }
+  };
+
   return (
     <div
       className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
@@ -29,9 +54,16 @@ function CampaignCard({ campaign }) {
         >
           <DropdownItem icon={ListTodo}>Manage reviews</DropdownItem>
           <DropdownDivider />
-          <DropdownItem icon={Link}>Get link</DropdownItem>
+          <DropdownItem
+            icon={Link}
+            onClick={() => handleGetCampaignLink(campaign?._id)}
+          >
+            Get link
+          </DropdownItem>
           <DropdownDivider />
-          <DropdownItem icon={SquarePen}>Edit campaign</DropdownItem>
+          <DropdownItem icon={SquarePen} onClick={handleEditCampaign}>
+            Edit campaign
+          </DropdownItem>
           <DropdownDivider />
           <DropdownItem icon={Copy}>Duplicate campaign</DropdownItem>
           <DropdownDivider />
@@ -43,6 +75,13 @@ function CampaignCard({ campaign }) {
       <p className="text-sm text-gray-500 dark:text-gray-400">
         Status: {campaign?.status}
       </p>
+      {showEditModal && (
+        <NewCampaignModal
+          campaignId={campaign?._id}
+          mode="edit"
+          setShowEditModal={setShowEditModal}
+        />
+      )}
     </div>
   );
 }
