@@ -3,28 +3,28 @@ import { Trash2 } from "lucide-react";
 
 export default function Question({
   maxLength = 100,
-  index,
+  id,
   questions,
   setQuestions,
+  defaultValue,
   placeholder = "Keep it short!",
 }) {
-  const [value, setValue] = useState(questions[index]);
+  const [value, setValue] = useState(defaultValue);
   const [show, setShow] = useState(true);
 
   useEffect(() => {
-    if (questions[index] !== value) {
-      setQuestions((prev) => {
-        const newQuestions = [...prev];
-        newQuestions[index] = value;
-        return newQuestions;
-      });
-    }
+    setQuestions((prev) => {
+      const newQuestions = [...prev];
+      const index = newQuestions.findIndex((q) => q.id === id);
+      newQuestions[index] = { id, question: value };
+      return newQuestions;
+    });
   }, [value]);
 
   const handleOnClick = () => {
     setValue("");
     setQuestions((prev) => {
-      const newQuestions = prev.filter((_, i) => i !== index);
+      const newQuestions = prev.filter((q) => q.id !== id);
       return newQuestions;
     });
     setShow(false);

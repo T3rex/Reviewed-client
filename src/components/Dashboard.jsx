@@ -59,7 +59,7 @@ export default function Dashboard() {
               <RefreshCcw color="green" />
             </div>
             <button
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition"
+              className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition"
               onClick={() => setshowCampaignModal(true)}
             >
               + New Campaign
@@ -140,7 +140,10 @@ export default function Dashboard() {
           </div>
         </section>
         {showCampaignModal && (
-          <NewCampaignModal setshowCampaignModal={setshowCampaignModal} />
+          <NewCampaignModal
+            setshowCampaignModal={setshowCampaignModal}
+            mode={"create"}
+          />
         )}
       </main>
     </div>

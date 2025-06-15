@@ -1,12 +1,12 @@
-import Question from "./Question";
-import { CirclePlus } from "lucide-react";
-import ModifiedDropdown from "./ModifiedDropdown";
-import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
-import { useFormContext } from "react-hook-form";
-import { ErrorMessage } from "@hookform/error-message";
-import toast from "react-hot-toast";
 import axios from "axios";
+import Question from "./Question";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { CirclePlus } from "lucide-react";
+import { useFormContext } from "react-hook-form";
+import ModifiedDropdown from "./ModifiedDropdown";
+import { ErrorMessage } from "@hookform/error-message";
+import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
 
 function CampaignCreation({
   extraInfo,
@@ -33,7 +33,10 @@ function CampaignCreation({
 
   const addQuestion = () => {
     if (questions.length < 5) {
-      setQuestions((prev) => [...prev, ""]);
+      setQuestions((prev) => [
+        ...prev,
+        { id: Date.now() + Math.random(), question: "" },
+      ]);
     }
   };
 
@@ -82,8 +85,6 @@ function CampaignCreation({
                     return savedCampaignId && "Campaign name is already taken";
                   }
                   if (mode === "edit") {
-                    console.log("Saved Campaign ID:", savedCampaignId._id);
-                    console.log("Current Campaign ID:", campaignId);
                     return savedCampaignId == campaignId
                       ? true
                       : "Campaign name is already taken";
@@ -180,14 +181,16 @@ function CampaignCreation({
             Questions (up to 5)
           </label>
           <div className="space-y-3">
-            {questions.map((question, index) => (
-              <Question
-                key={index}
-                defaultValue={question}
-                questions={questions}
-                index={index}
-                setQuestions={setQuestions}
-              />
+            {questions.map((question) => (
+              // console.log(question)
+              <div key={question?.id}>
+                <Question
+                  id={question?.id}
+                  defaultValue={question?.question}
+                  questions={questions}
+                  setQuestions={setQuestions}
+                />
+              </div>
             ))}
             {questions.length < 5 && (
               <div className="flex items-center gap-2 mt-3">
@@ -244,16 +247,6 @@ function CampaignCreation({
             />
           </div>
         </div>
-
-        {/* Submit */}
-        {/* <div className="pt-4 flex justify-center">
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold px-6 py-2 rounded-lg transition-colors"
-          >
-            Create Campaign
-          </button>
-        </div> */}
       </div>
     </div>
   );

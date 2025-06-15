@@ -11,10 +11,12 @@ import { Dropdown, DropdownItem, DropdownDivider } from "flowbite-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import NewCampaignModal from "./NewCampaignModal";
-import { set } from "react-hook-form";
+import InputModal from "./InputModal";
 
 function CampaignCard({ campaign }) {
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showInputModal, setShowInputModal] = useState(false);
+
   const handleEditCampaign = () => {
     setShowEditModal(true);
   };
@@ -32,6 +34,29 @@ function CampaignCard({ campaign }) {
     } catch (error) {
       console.error("Error getting campaign link:", error);
       toast.error("Failed to get campaign link.");
+    }
+  };
+
+  const handleDuplicateCampaign = async (campaignId) => {
+    setShowInputModal(true);
+  };
+
+  const deletCampaign = async (campaignId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/v1/campaign/${campaignId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response?.data?.success) {
+        toast.success("Campaign deleted successfully!");
+        window.location.reload();
+      } else {
+        toast.error("Failed to delete campaign.");
+      }
+    } catch (error) {
+      toast.error("Failed to delete campaign.");
     }
   };
 
@@ -65,9 +90,15 @@ function CampaignCard({ campaign }) {
             Edit campaign
           </DropdownItem>
           <DropdownDivider />
-          <DropdownItem icon={Copy}>Duplicate campaign</DropdownItem>
+          <DropdownItem icon={Copy} onClick={handleDuplicateCampaign}>
+            Duplicate campaign
+          </DropdownItem>
           <DropdownDivider />
-          <DropdownItem className="hover:text-red-500" icon={TriangleAlert}>
+          <DropdownItem
+            className="hover:text-red-500"
+            icon={TriangleAlert}
+            onClick={() => deletCampaign(campaign?._id)}
+          >
             Delete campaign
           </DropdownItem>
         </Dropdown>
@@ -80,6 +111,14 @@ function CampaignCard({ campaign }) {
           campaignId={campaign?._id}
           mode="edit"
           setShowEditModal={setShowEditModal}
+        />
+      )}
+      {showInputModal && (
+        <InputModal
+          mode="duplicate"
+          campaignId={campaign?._id}
+          setShowInputModal={setShowInputModal}
+          campaignName={campaign?.campaignName}
         />
       )}
     </div>

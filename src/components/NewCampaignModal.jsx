@@ -15,9 +15,18 @@ import { X, Blocks, HandHeart, Settings } from "lucide-react";
 import { useEffect } from "react";
 
 const defaultQuestions = [
-  "Who are you / what are you working on?",
-  "How has [our product/service] helped you?",
-  "What is the best thing about [our product/service]?",
+  {
+    id: Date.now() + Math.random(),
+    question: "Who are you / what are you working on?",
+  },
+  {
+    id: Date.now() + Math.random(),
+    question: "How has [our product/service] helped you?",
+  },
+  {
+    id: Date.now() + Math.random(),
+    question: "What is the best thing about [our product/service]?",
+  },
 ];
 
 const defaultExtraInfo = {
@@ -85,6 +94,7 @@ function NewCampaignModal({
   const onSubmit = (data) => {
     data["questions"] = questions;
     data["extraInfo"] = extraInfo;
+    console.log("Form Data:", data);
     submitForm(data);
   };
 
@@ -134,7 +144,7 @@ function NewCampaignModal({
               className="absolute top-4  right-4 text-gray-600 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition"
               aria-label="Close modal"
             >
-              <X className="w-6 h-6" />
+              <X className="w-6 h-6 cursor-pointer" />
             </button>
 
             <FormProvider {...methods}>
@@ -150,7 +160,7 @@ function NewCampaignModal({
                   {/* Button Tabs */}
                   <div className="flex flex-wrap justify-center mb-6 ">
                     <Button
-                      className={`rounded-l-lg rounded-r-none flex items-center gap-2 px-4 py-2 border transition ${
+                      className={`rounded-l-lg cursor-pointer rounded-r-none flex items-center gap-2 px-4 py-2 border transition ${
                         showForm === "Basic"
                           ? "bg-primary-800 text-white ring-2 ring-primary-300"
                           : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300"
@@ -162,7 +172,7 @@ function NewCampaignModal({
                     </Button>
 
                     <Button
-                      className={`rounded-none flex items-center gap-2 px-4py-2 border transition ${
+                      className={`rounded-none cursor-pointer flex items-center gap-2 px-4py-2 border transition ${
                         showForm === "ThankYouPage"
                           ? "bg-primary-800 text-white ring-2 ring-primary-300"
                           : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300"
@@ -176,7 +186,7 @@ function NewCampaignModal({
                     </Button>
 
                     <Button
-                      className={` rounded-l-none rounded-r-lg flex items-center gap-2 px-4 py-2 border transition ${
+                      className={` rounded-l-none  cursor-pointer rounded-r-lg flex items-center gap-2 px-4 py-2 border transition ${
                         showForm === "Settings"
                           ? "bg-primary-800 text-white ring-2 ring-primary-300"
                           : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-300"
@@ -194,6 +204,7 @@ function NewCampaignModal({
                   <form
                     onSubmit={methods.handleSubmit(onSubmit)}
                     className="space-y-6"
+                    encType="multipart/form-data"
                   >
                     {showForm === "Basic" && (
                       <CampaignCreation

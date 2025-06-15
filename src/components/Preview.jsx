@@ -41,12 +41,12 @@ function Preview({ questions }) {
       </h4>
 
       <ul className="text-left list-disc list-inside text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4 w-full">
-        {questions.map((q, i) => (
+        {questions.map((q) => (
           <li
-            key={i}
+            key={q?.id}
             className="break-words whitespace-pre-wrap p-1 transition-all"
           >
-            {q}
+            {q?.question}
           </li>
         ))}
       </ul>

@@ -9,8 +9,16 @@ function SuccessModal({
   setshowCampaignModal,
   submissionLink,
   setShowEditModal,
+  setShowInputModal,
 }) {
-  console.log("Submission Link:", submissionLink);
+  let title = "";
+  if (mode === "create") {
+    title = "Created";
+  } else if (mode === "edit") {
+    title = "Edited";
+  } else if (mode === "duplicate") {
+    title = "Duplicated";
+  }
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(submissionLink);
@@ -22,6 +30,13 @@ function SuccessModal({
 
   const handleClose = () => {
     setshowSucessModal(false);
+    if (mode === "create") {
+      setshowCampaignModal(false);
+    } else if (mode === "edit") {
+      setShowEditModal(false);
+    } else if (mode === "duplicate") {
+      setShowInputModal(false);
+    }
     mode === "create" ? setshowCampaignModal(false) : setShowEditModal(false);
   };
 
@@ -46,8 +61,7 @@ function SuccessModal({
           />
 
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
-            Campaign {mode === "created" ? "Created" : "Updated"} Successfully!
-            🎉
+            Campaign {title} Successfully! 🎉
           </h2>
 
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
