@@ -16,7 +16,7 @@ function Preview({ questions }) {
       <img
         src={watch("campaignLogo") || "/default-logo.png"}
         alt="Campaign Logo"
-        className="w-24 h-24 rounded-full object-cover mb-4 border-2 border-gray-300 dark:border-gray-600 transition-all duration-300"
+        className="w-36 h-36 rounded-full object-fill mb-4 border-2 border-gray-300 dark:border-gray-600 transition-all duration-300"
       />
 
       <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 break-words transition-all">

@@ -49,9 +49,26 @@ function NewCampaignModal({
 
   const [extraInfo, setExtraInfo] = useState(defaultExtraInfo);
 
+  const methods = useForm({
+    defaultValues: {
+      campaignName: "",
+      headerTitle: "",
+      customMessage: "",
+      campaignLogo: "https://i.pravatar.cc/40",
+      collectStars: true,
+      file: null,
+      collectionType: "Text only",
+      thankImageUrl:
+        "https://media1.giphy.com/media/g9582DNuQppxC/giphy.gif?cid=ecf05e47ibtkj6mhht2m6gpzy157hwtxvlxlzqlijwrfqh8i&rid=giphy.gif",
+      thankTitle: "",
+      thankMessage: "",
+      redirectUrl: "",
+      allowSMShare: false,
+    },
+  });
+
   useEffect(() => {
     if (mode == "edit" && campaignId) {
-      console.log(campaignId);
       const fetchCampaignData = async () => {
         try {
           const response = await axios.get(
@@ -73,28 +90,9 @@ function NewCampaignModal({
     }
   }, [mode, campaignId]);
 
-  const methods = useForm({
-    defaultValues: {
-      campaignName: "",
-      headerTitle: "",
-      customMessage: "",
-      campaignLogo: "https://i.pravatar.cc/40",
-      collectStars: true,
-      file: null,
-      collectionType: "Text only",
-      thankImageUrl:
-        "https://media1.giphy.com/media/g9582DNuQppxC/giphy.gif?cid=ecf05e47ibtkj6mhht2m6gpzy157hwtxvlxlzqlijwrfqh8i&rid=giphy.gif",
-      thankTitle: "",
-      thankMessage: "",
-      redirectUrl: "",
-      allowSMShare: false,
-    },
-  });
-
   const onSubmit = (data) => {
     data["questions"] = questions;
     data["extraInfo"] = extraInfo;
-    console.log("Form Data:", data);
     submitForm(data);
   };
 
@@ -223,7 +221,7 @@ function NewCampaignModal({
                     <div className="flex justify-center pt-4">
                       <button
                         type="submit"
-                        className="w-full sm:w-9/10 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-md transition"
+                        className="w-full  cursor-pointer sm:w-9/10 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-md transition"
                         disabled={methods.formState.isSubmitting}
                       >
                         {mode === "create"

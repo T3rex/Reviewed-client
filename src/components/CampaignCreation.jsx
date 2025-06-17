@@ -6,6 +6,7 @@ import { CirclePlus } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import ModifiedDropdown from "./ModifiedDropdown";
 import { ErrorMessage } from "@hookform/error-message";
+
 import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
 
 function CampaignCreation({
@@ -23,11 +24,29 @@ function CampaignCreation({
     formState: { errors },
   } = useFormContext();
 
-  const handleImageChange = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("logoImage", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/upload/logo",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+
       const imageUrl = URL.createObjectURL(file);
-      setValue("campaignLogo", imageUrl);
+      setValue("campaignLogo", imageUrl); // Set in form field
+    } catch (err) {
+      toast.error("Failed to upload image");
+      console.error(err);
     }
   };
 
@@ -80,7 +99,8 @@ function CampaignCreation({
                     { campaignName: value },
                     { withCredentials: true }
                   );
-                  const savedCampaignId = response.data.campaignId._id;
+                  console.log(response.data);
+                  const savedCampaignId = response.data?.campaignId?._id;
                   if (mode === "create") {
                     return savedCampaignId && "Campaign name is already taken";
                   }
@@ -131,7 +151,7 @@ function CampaignCreation({
               className="block w-full text-white text-sm file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-100 file:text-blue-700 hover:cursor-pointer hover:file:bg-primary-800 dark:file:bg-primary-700 dark:file:text-white hover:file:cursor-pointer"
               {...register("file")}
               onChange={(e) => {
-                handleImageChange(e);
+                handleImageUpload(e);
               }}
             />
           </div>
@@ -222,7 +242,11 @@ function CampaignCreation({
             <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
               Collection Type <span className="text-orange-500">*</span>
             </label>
-            <Dropdown label={watch("collectionType")} dismissOnClick>
+            <Dropdown
+              className=" cursor-pointer"
+              label={watch("collectionType")}
+              dismissOnClick
+            >
               {["Text only", "Video only", "Text and Video"].map((type) => {
                 return (
                   <DropdownItem
