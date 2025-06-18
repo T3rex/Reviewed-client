@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [dashboardData]);
 
   const handleRefresh = () => {
     try {
@@ -53,7 +53,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-3">
             <div
-              className="p-2 bg-white dark:bg-gray-700 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+              className="p-2 bg-white  dark:bg-gray-700 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
               onClick={handleRefresh}
             >
               <RefreshCcw color="green" />

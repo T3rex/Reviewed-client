@@ -51,7 +51,6 @@ function CampaignCard({ campaign }) {
       );
       if (response?.data?.success) {
         toast.success("Campaign deleted successfully!");
-        window.location.reload();
       } else {
         toast.error("Failed to delete campaign.");
       }

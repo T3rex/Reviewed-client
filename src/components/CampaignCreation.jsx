@@ -65,6 +65,12 @@ function CampaignCreation({
     }
   }, [errors?.campaignName]);
 
+  useEffect(() => {
+    if (errors?.headerTitle?.message) {
+      toast.error(errors.headerTitle.message);
+    }
+  }, [errors?.headerTitle]);
+
   return (
     <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
       {/* Header */}
@@ -127,7 +133,8 @@ function CampaignCreation({
           <p className="text-sm text-gray-500 mt-1">
             Public URL:
             <span className="font-semibold">
-              reviewed.com/your-campaign/{watch("campaignName")}
+              reviewed.com/
+              {watch("campaignName").split(" ").join("-")}/...
             </span>
           </p>
         </div>
@@ -175,7 +182,6 @@ function CampaignCreation({
             errors={errors}
             name="headerTitle"
             render={({ message }) => {
-              toast.error(message);
               return;
             }}
           />
