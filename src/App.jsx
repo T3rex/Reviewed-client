@@ -9,6 +9,7 @@ import { createRoot } from "react-dom/client";
 import Dashboard from "./components/Dashboard";
 import AuthProvider from "./hooks/AuthProvider";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import ReviewForm from "./components/ReviewForm";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 
 function Applayout() {
@@ -46,6 +47,11 @@ const appRouter = createBrowserRouter([
       },
       { path: "/signin", element: <Signin /> },
     ],
+  },
+  {
+    path: "/submit/:campaignName/:campaignId",
+    element: <ReviewForm />,
+    errorElement: <div>404 Not Found</div>,
   },
 ]);
 
