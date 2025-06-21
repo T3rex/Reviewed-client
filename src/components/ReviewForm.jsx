@@ -4,11 +4,13 @@ import logo from "../assets/logo-dark.svg";
 import axios from "axios";
 import { Video, PencilLine } from "lucide-react";
 import TextReviewModal from "./TextReviewModal";
+import VideoReviewModal from "./VideoReviewModal";
 
 function ReviewForm() {
   const { campaignName, campaignId } = useParams();
   const [formConfig, setFormConfig] = useState(null);
   const [showTextReviewModal, setShowTextReviewModal] = useState(false);
+  const [showVideoReviewModal, setShowVideoReviewModal] = useState(false);
 
   useEffect(() => {
     fetchCampaignDetails();
@@ -72,7 +74,10 @@ function ReviewForm() {
                 <div className="w-full flex flex-col sm:flex-row gap-4 items-center justify-center">
                   {(formConfig.collectionType === "Video only" ||
                     formConfig.collectionType === "Text and Video") && (
-                    <button className="w-full max-w-7/10 px-4 py-2 rounded-lg cursor-pointer bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-300 flex items-center justify-center">
+                    <button
+                      className="w-full max-w-7/10 px-4 py-2 rounded-lg cursor-pointer bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-300 flex items-center justify-center"
+                      onClick={() => setShowVideoReviewModal(true)}
+                    >
                       <Video className="w-5 h-5 mr-2" />
                       Record Video
                     </button>
@@ -105,6 +110,12 @@ function ReviewForm() {
       {showTextReviewModal && (
         <TextReviewModal
           setShowTextReviewModal={setShowTextReviewModal}
+          formConfig={formConfig}
+        />
+      )}
+      {showVideoReviewModal && (
+        <VideoReviewModal
+          setShowVideoReviewModal={setShowVideoReviewModal}
           formConfig={formConfig}
         />
       )}
