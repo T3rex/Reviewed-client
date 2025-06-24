@@ -6,7 +6,7 @@ import { CirclePlus } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import ModifiedDropdown from "./ModifiedDropdown";
 import { ErrorMessage } from "@hookform/error-message";
-
+import { SERVER_DOMAIN } from "../AppConfig";
 import { Dropdown, DropdownItem, ToggleSwitch } from "flowbite-react";
 
 function CampaignCreation({
@@ -32,7 +32,7 @@ function CampaignCreation({
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/upload/logo",
+        `${SERVER_DOMAIN}/api/v1/upload/logo`,
         formData,
         {
           headers: {
@@ -101,7 +101,7 @@ function CampaignCreation({
               validate: async (value) => {
                 try {
                   const response = await axios.post(
-                    "http://localhost:3000/api/v1/campaign/check-availability",
+                    `${SERVER_DOMAIN}/api/v1/campaign/check-availability`,
                     { campaignName: value },
                     { withCredentials: true }
                   );

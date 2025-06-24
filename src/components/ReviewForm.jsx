@@ -5,6 +5,7 @@ import axios from "axios";
 import { Video, PencilLine } from "lucide-react";
 import TextReviewModal from "./TextReviewModal";
 import VideoReviewModal from "./VideoReviewModal";
+import { SERVER_DOMAIN } from "../AppConfig";
 
 function ReviewForm() {
   const { campaignName, campaignId } = useParams();
@@ -19,13 +20,17 @@ function ReviewForm() {
   const fetchCampaignDetails = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/campaign/public/${campaignId}`
+        `${SERVER_DOMAIN}/api/v1/campaign/public/${campaignId}`
       );
       console.log(response.data.data);
       setFormConfig(response.data.data);
     } catch (error) {
       console.log("Could not fetch campaign details", error);
     }
+  };
+
+  const handleVideoReviewModal = async () => {
+    setShowVideoReviewModal(true);
   };
 
   return (
@@ -76,7 +81,9 @@ function ReviewForm() {
                     formConfig.collectionType === "Text and Video") && (
                     <button
                       className="w-full max-w-7/10 px-4 py-2 rounded-lg cursor-pointer bg-red-500 hover:bg-red-600 text-white font-medium transition-all duration-300 flex items-center justify-center"
-                      onClick={() => setShowVideoReviewModal(true)}
+                      onClick={() => {
+                        handleVideoReviewModal();
+                      }}
                     >
                       <Video className="w-5 h-5 mr-2" />
                       Record Video
@@ -99,7 +106,7 @@ function ReviewForm() {
           ) : (
             <div className="flex justify-center">
               <img
-                className="w-40"
+                className="w-full"
                 alt="Loading..."
                 src="https://i.pinimg.com/originals/3b/4e/10/3b4e109d6b621ed5a9249769afbd4dfa.gif"
               />

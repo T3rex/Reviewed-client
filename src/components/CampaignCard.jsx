@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import NewCampaignModal from "./NewCampaignModal";
 import InputModal from "./InputModal";
+import { SERVER_DOMAIN } from "../AppConfig";
 
 function CampaignCard({ campaign }) {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -24,7 +25,7 @@ function CampaignCard({ campaign }) {
   const handleGetCampaignLink = async (campaignId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/campaign/submission-link/${campaignId}`,
+        `${SERVER_DOMAIN}/api/v1/campaign/submission-link/${campaignId}`,
         {
           withCredentials: true,
         }
@@ -44,7 +45,7 @@ function CampaignCard({ campaign }) {
   const deletCampaign = async (campaignId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/v1/campaign/${campaignId}`,
+        `${SERVER_DOMAIN}/api/v1/campaign/${campaignId}`,
         {
           withCredentials: true,
         }
