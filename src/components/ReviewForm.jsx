@@ -6,6 +6,7 @@ import { Video, PencilLine } from "lucide-react";
 import TextReviewModal from "./TextReviewModal";
 import VideoReviewModal from "./VideoReviewModal";
 import { SERVER_DOMAIN } from "../AppConfig";
+import { Toaster } from "react-hot-toast";
 
 function ReviewForm() {
   const { campaignName, campaignId } = useParams();
@@ -35,6 +36,7 @@ function ReviewForm() {
 
   return (
     <div>
+      <Toaster position="top-right" />
       <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
         <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow-md">
           {formConfig ? (

@@ -2,40 +2,57 @@ import { useEffect, useState, useRef } from "react";
 import { X, VideoOff, Video } from "lucide-react";
 import { Dropdown, DropdownItem } from "flowbite-react";
 import { ReactMediaRecorder } from "react-media-recorder";
+import toast from "react-hot-toast";
 
 function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
   const [timer, setTimer] = useState();
+  const [seconds, setSeconds] = useState(0);
   const [videoDevices, setVideoDevice] = useState([]);
-  const [audioDevices, setaudioDevices] = useState([]);
+  const [audioDevices, setAudioDevices] = useState([]);
+  const [selectedVideoDeviceId, setSelectedVideoDeviceId] = useState("");
+  const [selectedAudioDeviceId, setSelectedAudioDeviceId] = useState("");
   const handleSubmit = () => console.log("Submit");
 
-  const popUpPermission = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-      return stream;
-    } catch (error) {}
-  };
-
   const handleClose = (stopRecording, status) => {
-    console.log("status inside:" + status);
     if (status === "recording") {
-      console.log("Recording in progress");
+      toast.error("Please stop the recording before closing.", {
+        duration: 4000,
+      });
       return;
     }
     stopRecording();
     setShowVideoReviewModal(false);
   };
 
-  const handleStartRecording = (startRecording) => {
+  const handleStartRecording = (startRecording, stopRecording) => {
     setTimer(3);
     const intervalId = setInterval(() => {
       setTimer((prev) => {
         if (prev === 1) {
           clearInterval(intervalId);
           startRecording();
+          setSeconds(180);
+          setInterval(() => {
+            setSeconds((prev) => {
+              if (prev <= 0) {
+                clearInterval(intervalId);
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+          const timerId = setTimeout(() => {
+            toast.error(
+              "Recording stopped after 3 minutes",
+              { icon: "⏱️" },
+              {
+                duration: 4000,
+              }
+            );
+            stopRecording();
+            clearTimeout(timerId);
+          }, 180 * 1000);
+
           return prev - 1;
         }
         return prev - 1;
@@ -73,24 +90,20 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
 
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
-      devices.forEach((device) => {
-        // console.log(device);
-        if (device.kind === "videoinput") {
-          setVideoDevice((prev) => {
-            prev = [...prev, device];
-            return prev;
-          });
-        }
-        if (device.kind === "audioinput") {
-          setaudioDevices((prev) => {
-            prev = [...prev, device];
-            return prev;
-          });
-        }
-      });
+      const videoInputs = devices.filter((d) => d.kind === "videoinput");
+      const audioInputs = devices.filter((d) => d.kind === "audioinput");
+
+      setVideoDevice(videoInputs);
+      setAudioDevices(audioInputs);
+
+      setSelectedVideoDeviceId(
+        (prev) => prev || videoInputs[0]?.deviceId || ""
+      );
+      setSelectedAudioDeviceId(
+        (prev) => prev || audioInputs[0]?.deviceId || ""
+      );
     });
   }, []);
-
   return (
     <div className="fixed inset-0 z-50 pt-30 pb-5 sm:pb-0 sm:pt-0 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 overflow-y-auto">
       {/* Modal Box */}
@@ -100,8 +113,24 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
           {/* Video Area */}
           <div>
             <ReactMediaRecorder
-              video
-              audio
+              video={
+                selectedVideoDeviceId
+                  ? { deviceId: selectedVideoDeviceId }
+                  : true
+              }
+              audio={
+                selectedAudioDeviceId
+                  ? { deviceId: selectedAudioDeviceId }
+                  : true
+              }
+              onStart={() => {
+                toast.success("Recording started", { duration: 4000 });
+              }}
+              onStop={() => {
+                toast.success("Recording completed succesfully", {
+                  duration: 4000,
+                });
+              }}
               render={({
                 error,
                 status,
@@ -113,7 +142,6 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
               }) => {
                 return (
                   <>
-                    {console.log("Error:", error)}
                     {/* Close Button */}
                     {/*  {console.log(status)} */}
                     <button
@@ -161,52 +189,100 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
                     )}
                     {/* Timer */}
                     <div
-                      className={
-                        "h-80 w-full bg-gray-800 text-7xl text-white flex items-center justify-center rounded-lg my-4 transition-all duration-300 ease-in-out" +
-                        (status === "idle" || status === "acquiring_media"
+                      className={`h-80 w-full bg-gray-800 text-8xl mb-0 text-white flex items-center justify-center rounded-lg rounded-b-none my-4 transition-all duration-300 ease-in-out ${
+                        status === "idle" || status === "acquiring_media"
                           ? "opacity-100"
-                          : "opacity-0 hidden")
-                      }
+                          : "opacity-0 hidden"
+                      }`}
                     >
-                      {timer}
+                      {timer || <Video size={100} />}
                     </div>
                     {/* Device Settings */}
                     {status === "idle" && (
-                      <div className="bg-gray-100 p-4 rounded-xl border border-gray-300 flex flex-col  items-center sm:flex-row justify-between gap-3 sm:items-center  ">
-                        <h2 className="text-lg font-semibold text-gray-800">
+                      <div className="bg-gray-50 p-6 rounded-t-none mt-0 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-4 w-full items-center sm:items-center">
+                        <h2 className="text-xl font-semibold text-gray-800 text-center sm:text-left">
                           Device Settings
                         </h2>
-                        <div className="flex flex-row items-center justify-center sm:flex-row gap-3 w-full sm:w-auto ">
-                          <Dropdown
-                            label="Camera"
-                            dismissOnClick
-                            color="pink"
-                            className="cursor-pointer"
-                          >
-                            {videoDevices.map((device) => (
-                              <DropdownItem key={device?.id}>
-                                {device.label}
-                              </DropdownItem>
-                            ))}
-                          </Dropdown>
-                          <Dropdown
-                            label="Audio"
-                            dismissOnClick
-                            color="pink"
-                            className="cursor-pointer"
-                          >
-                            {audioDevices.map((device) => (
-                              <DropdownItem key={device?.id}>
-                                {device.label}
-                              </DropdownItem>
-                            ))}
-                          </Dropdown>
+
+                        <div className="flex flex-col sm:flex-row justify-between w-full gap-6">
+                          {/* Camera Settings */}
+                          <div className="flex flex-col justify-center items-center gap-2 w-full sm:w-1/2">
+                            <Dropdown
+                              label="Camera"
+                              dismissOnClick
+                              color="pink"
+                              className="cursor-pointer "
+                            >
+                              {videoDevices.map((device) => (
+                                <DropdownItem
+                                  key={device.deviceId}
+                                  onClick={() => {
+                                    setSelectedVideoDeviceId(device.deviceId);
+                                    toast.success(
+                                      `Selected camera: ${device.label}`
+                                    );
+                                  }}
+                                >
+                                  {device.label || "Unnamed Camera"}
+                                </DropdownItem>
+                              ))}
+                            </Dropdown>
+                            <p className="text-sm text-gray-500">
+                              {
+                                videoDevices.find(
+                                  (d) => d.deviceId === selectedVideoDeviceId
+                                )?.label
+                              }
+                            </p>
+                          </div>
+
+                          {/* Microphone Settings */}
+                          <div className="flex flex-col  justify-center items-center  gap-2 w-full sm:w-1/2">
+                            <Dropdown
+                              label="Microphone"
+                              dismissOnClick
+                              color="pink"
+                              className="cursor-pointer "
+                            >
+                              {audioDevices.map((device) => (
+                                <DropdownItem
+                                  key={device.deviceId}
+                                  onClick={() => {
+                                    setSelectedAudioDeviceId(device.deviceId);
+                                    toast.success(
+                                      `Selected microphone: ${device.label}`
+                                    );
+                                  }}
+                                >
+                                  {device.label || "Unnamed Microphone"}
+                                </DropdownItem>
+                              ))}
+                            </Dropdown>
+                            <p className="text-sm text-gray-500">
+                              {
+                                audioDevices.find(
+                                  (d) => d.deviceId === selectedAudioDeviceId
+                                )?.label
+                              }
+                            </p>
+                          </div>
                         </div>
+                      </div>
+                    )}
+                    {/* Timer Display */}
+                    {status === "recording" && (
+                      <div className="text-2xl font-semibold text-center text-gray-800">
+                        {Math.floor(seconds / 60).toString() +
+                          ":" +
+                          (seconds % 60).toString().padStart(2, "0")}
                       </div>
                     )}
                     {/* Stream Preview */}
                     {status === "recording" && (
-                      <VideoPreview stream={previewStream} />
+                      <VideoPreview
+                        stream={previewStream}
+                        className="object-cover"
+                      />
                     )}
                     {/* Recorded Video */}
                     {status === "stopped" && mediaBlobUrl && (
@@ -231,7 +307,9 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
                       {status === "idle" && (
                         <button
                           className="bg-blue-500 hover:bg-blue-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
-                          onClick={() => handleStartRecording(startRecording)}
+                          onClick={() =>
+                            handleStartRecording(startRecording, stopRecording)
+                          }
                         >
                           <Video /> Record Video
                         </button>
