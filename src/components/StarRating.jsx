@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 
 function StarRating() {
-  const [rating, setRating] = useState(4);
+  const [rating, setRating] = useState(5);
   const [hover, setHover] = useState(0);
-
   return (
     <div className="flex justify-center items-center gap-2 mb-6">
       {[...Array(5)].map((_, i) => {
