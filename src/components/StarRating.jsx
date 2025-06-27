@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 
-function StarRating() {
-  const [rating, setRating] = useState(5);
+function StarRating({ rating, setRating }) {
   const [hover, setHover] = useState(0);
   return (
     <div className="flex justify-center items-center gap-2 mb-6">

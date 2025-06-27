@@ -30,7 +30,7 @@ function ReviewForm() {
     }
   };
 
-  const handleVideoReviewModal = async () => {
+  const handleVideoReviewModal = () => {
     setShowVideoReviewModal(true);
   };
 
