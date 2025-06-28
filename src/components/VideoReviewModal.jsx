@@ -107,9 +107,8 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 pt-30 pb-5 sm:pb-0 sm:pt-0 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 overflow-y-auto">
-      {/* Modal Box */}
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto  p-6 sm:p-8">
+    <div className="fixed inset-0 z-50 flex justify-center bg-black/40 backdrop-blur-sm px-4 py-8 overflow-y-auto">
+      <div className="relative bg-white rounded-2xl overflow-y-scroll shadow-2xl w-full max-w-lg mx-auto p-6 sm:p-8 no-scrollbar">
         {/* Modal Content */}
         <div className="flex flex-col gap-6 mt-2">
           {/* Video Area */}

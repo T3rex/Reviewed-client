@@ -2,8 +2,10 @@ import { X } from "lucide-react";
 import StarRating from "./StarRating";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { SERVER_DOMAIN } from "../AppConfig";
 
 function TextReviewModal({ setShowTextReviewModal, formConfig }) {
   const {
@@ -12,30 +14,86 @@ function TextReviewModal({ setShowTextReviewModal, formConfig }) {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({ defaultValues: { imageUrl: "https://i.pravatar.cc/40" } });
+  } = useForm({ defaultValues: { reviewerPhoto: "https://i.pravatar.cc/40" } });
+
+  const { campaignName, campaignId } = useParams();
   const [rating, setRating] = useState(5);
+  const [permission, setPermission] = useState(false);
+
   const handleClose = () => setShowTextReviewModal(false);
-  const onSubmit = (data) => {
+
+  const onSubmit = async (data) => {
+    if (!permission) {
+      toast.error("Please give permission", { duration: 4000 });
+      return;
+    }
     const payload = { ...data, rating };
-    console.log(payload);
+    submitForm(payload);
   };
-  console.log(watch("imageUrl"));
-  const handleImageUpload = async (e) => {
+
+  const submitForm = async (data) => {
+    try {
+      const response = await axios.post(
+        `${SERVER_DOMAIN}/api/v1/submit/${campaignName}/${campaignId}`,
+        data,
+        { withCredentials: true }
+      );
+      toast.success("Review submitted succesfully.", { duration: 4000 });
+      setShowTextReviewModal(false);
+    } catch (error) {
+      toast.error("Something went wrong try again!! ", {
+        duration: 4000,
+      });
+      console.error("Error creating campaign:", error);
+    }
+  };
+
+  const handleAttachments = async (e) => {
+    const files = e.target.files;
+    console.log(files);
+    if (!files || files.length == 0) return;
+    if (files.length > 5) {
+      toast.error("Please select upto 5 images only", { duration: 4000 });
+    }
+    const formData = new FormData();
+    Array.from(files).forEach((file) => {
+      formData.append("images", file);
+    });
+
+    try {
+      const res = await axios.post(
+        `${SERVER_DOMAIN}/api/v1/upload/images`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(res.data);
+    } catch (err) {
+      toast.error("Failed to upload image");
+      console.error(err);
+    }
+  };
+
+  const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const formData = new FormData();
-    formData.append("logoImage", file);
+    formData.append("photo", file);
 
     try {
-      await axios.post("http://localhost:3000/api/v1/upload/logo", formData, {
+      await axios.post("http://localhost:3000/api/v1/upload/images", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       });
 
-      const imageUrl = URL.createObjectURL(file);
-      setValue("imageUrl", imageUrl); // Set in form field
+      const reviewerPhoto = URL.createObjectURL(file);
+      setValue("reviewerPhoto", reviewerPhoto);
     } catch (err) {
       toast.error("Failed to upload image");
       console.error(err);
@@ -43,9 +101,8 @@ function TextReviewModal({ setShowTextReviewModal, formConfig }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 overflow-y-auto">
-      {/* Modal Box */}
-      <div className="relative bg-white rounded-2xl mt-100 shadow-2xl w-full max-w-lg mx-auto p-6 sm:p-8">
+    <div className="fixed inset-0 z-50 flex justify-center bg-black/40 backdrop-blur-sm px-4 py-8 overflow-y-auto">
+      <div className="relative bg-white rounded-2xl overflow-y-scroll shadow-2xl w-full max-w-lg mx-auto p-6 sm:p-8 no-scrollbar">
         {/* Close Button */}
         <button
           onClick={handleClose}
@@ -101,7 +158,9 @@ function TextReviewModal({ setShowTextReviewModal, formConfig }) {
                 <input
                   type="file"
                   accept="image/*"
-                  className="block w-full text-white text-sm file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary-700 file:text-white hover:cursor-pointer hover:file:bg-primary-800 file:cursor-pointer"
+                  className="block w-full text-black text-sm file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary-700 file:text-white hover:cursor-pointer hover:file:bg-primary-800 file:cursor-pointer"
+                  multiple
+                  onChange={(e) => handleAttachments(e)}
                 />
               </div>
               {/* Name */}
@@ -175,21 +234,27 @@ function TextReviewModal({ setShowTextReviewModal, formConfig }) {
               </label>
               <div className="flex items-center gap-4">
                 <img
-                  src={watch("imageUrl")}
+                  src={watch("reviewerPhoto")}
                   alt="Preview"
                   className="w-20 h-20 rounded-full border border-gray-300 object-fill"
                 />
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={handleImageUpload}
+                  onChange={handlePhotoUpload}
                   className="block w-full text-sm text-gray-700 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
                 />
               </div>
             </div>
             {/* Permission */}
             <div className="flex items-start gap-3 text-sm ">
-              <input type="checkbox" className="mt-1" />
+              <input
+                type="checkbox"
+                className="mt-1"
+                onClick={() => {
+                  setPermission((prev) => !prev);
+                }}
+              />
               <label>
                 I give permission to use this testimonial across social channels
                 and other marketing efforts

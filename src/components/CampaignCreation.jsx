@@ -32,7 +32,7 @@ function CampaignCreation({
 
     try {
       const response = await axios.post(
-        `${SERVER_DOMAIN}/api/v1/upload/logo`,
+        `${SERVER_DOMAIN}/api/v1/upload/images`,
         formData,
         {
           headers: {
