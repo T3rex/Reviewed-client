@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [dashboardData]);
+  }, []);
 
   const handleRefresh = () => {
     try {
@@ -88,7 +88,7 @@ export default function Dashboard() {
           </div>
           <div className="bg-white dark:bg-gray-800 p-5 rounded-lg shadow">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Avg. Rating
+              Average Rating
             </p>
             <p className="text-2xl font-bold text-yellow-500">
               ⭐ {dashboardData?.averageRating || 0}

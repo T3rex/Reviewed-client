@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, memo } from "react";
 import { X, VideoOff, Video, Send, History } from "lucide-react";
 import { Dropdown, DropdownItem } from "flowbite-react";
 import { ReactMediaRecorder } from "react-media-recorder";
-import TimerDisplay from "./TimerDisplay";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import StarRating from "./StarRating";
 
@@ -13,12 +13,22 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
   const [selectedVideoDeviceId, setSelectedVideoDeviceId] = useState("");
   const [selectedAudioDeviceId, setSelectedAudioDeviceId] = useState("");
   const [permission, setPermission] = useState(false);
+  const [rating, setRating] = useState(5);
 
-  const handleSubmit = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
     if (!permission) {
+      console.log("Permission not granted");
       toast.error("Please give permission!", { duration: 4000 });
       return;
     }
+    console.log(data);
     toast.success("Review sent successfully.", { duration: 4000 });
   };
 
@@ -108,7 +118,7 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-center bg-black/40 backdrop-blur-sm px-4 py-8 overflow-y-auto">
-      <div className="relative bg-white rounded-2xl overflow-y-scroll shadow-2xl w-full max-w-lg mx-auto p-6 sm:p-8 no-scrollbar">
+      <div className="relative bg-white h-fit rounded-2xl overflow-y-scroll shadow-2xl w-full max-w-lg mx-auto p-6 sm:p-8 no-scrollbar">
         {/* Modal Content */}
         <div className="flex flex-col gap-6 mt-2">
           {/* Video Area */}
@@ -142,7 +152,7 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
                 previewStream,
               }) => {
                 return (
-                  <>
+                  <div>
                     {/* Close Button */}
                     <button
                       onClick={() => handleClose(stopRecording, status)}
@@ -283,129 +293,148 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
                       />
                     )}
                     {/* Post Recording */}
-                    {status === "stopped" && (
-                      <div className="flex flex-col items-start gap-3 text-sm my-3">
-                        <StarRating />
-                        <div className="flex flex-col gap-4 w-full">
-                          {/* Name */}
-                          <div>
-                            <label className="block text-sm font-medium mb-1">
-                              Your Name{" "}
-                              <span className="text-orange-500">*</span>
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              maxLength={50}
-                            />
-                          </div>
-                          {/* Email */}
-                          {formConfig.extraInfo.email.enabled && (
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                      {status === "stopped" && (
+                        <div className="flex flex-col items-start gap-3 text-sm my-3">
+                          <StarRating rating={rating} setRating={setRating} />
+                          <div className="flex flex-col gap-4 w-full">
+                            {/* Name */}
                             <div>
                               <label className="block text-sm font-medium mb-1">
-                                Your Email{" "}
-                                {formConfig.extraInfo.email.required && (
-                                  <span className="text-orange-500">*</span>
-                                )}
-                              </label>
-                              <input
-                                type="email"
-                                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                maxLength={50}
-                              />
-                            </div>
-                          )}
-                          {/* Social Link */}
-                          {formConfig.extraInfo.socialLink.enabled && (
-                            <div>
-                              <label className="block text-sm font-medium mb-1">
-                                Your Social Link{" "}
-                                {formConfig.extraInfo.socialLink.required && (
-                                  <span className="text-orange-500">*</span>
-                                )}
-                              </label>
-                              <input
-                                type="url"
-                                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                maxLength={50}
-                              />
-                            </div>
-                          )}
-                          {formConfig.extraInfo.title.enabled && (
-                            <div>
-                              <label className="block text-sm font-medium mb-1">
-                                Your Title{" "}
-                                {formConfig.extraInfo.title.required && (
-                                  <span className="text-orange-500">*</span>
-                                )}
+                                Your Name{" "}
+                                <span className="text-orange-500">*</span>
                               </label>
                               <input
                                 type="text"
                                 className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 maxLength={50}
+                                {...register("reviewerName", {
+                                  required: true,
+                                })}
                               />
                             </div>
-                          )}
+                            {/* Email */}
+                            {formConfig.extraInfo.email.enabled && (
+                              <div>
+                                <label className="block text-sm font-medium mb-1">
+                                  Your Email{" "}
+                                  {formConfig.extraInfo.email.required && (
+                                    <span className="text-orange-500">*</span>
+                                  )}
+                                </label>
+                                <input
+                                  type="email"
+                                  className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  maxLength={50}
+                                  {...register("reviewerEmail", {
+                                    required:
+                                      formConfig.extraInfo.email.required,
+                                  })}
+                                />
+                              </div>
+                            )}
+                            {/* Social Link */}
+                            {formConfig.extraInfo.socialLink.enabled && (
+                              <div>
+                                <label className="block text-sm font-medium mb-1">
+                                  Your Social Link{" "}
+                                  {formConfig.extraInfo.socialLink.required && (
+                                    <span className="text-orange-500">*</span>
+                                  )}
+                                </label>
+                                <input
+                                  type="url"
+                                  className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  maxLength={50}
+                                  {...register("reviewerSocialLink", {
+                                    required:
+                                      formConfig.extraInfo.socialLink.required,
+                                  })}
+                                />
+                              </div>
+                            )}
+                            {formConfig.extraInfo.title.enabled && (
+                              <div>
+                                <label className="block text-sm font-medium mb-1">
+                                  Your Title{" "}
+                                  {formConfig.extraInfo.title.required && (
+                                    <span className="text-orange-500">*</span>
+                                  )}
+                                </label>
+                                <input
+                                  type="text"
+                                  className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  maxLength={50}
+                                  {...register("reviewerTitle", {
+                                    required:
+                                      formConfig.extraInfo.title.required,
+                                  })}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <input
+                              type="checkbox"
+                              className="mt-1 cursor-pointer"
+                              onClick={() => setPermission((prev) => !prev)}
+                            />
+                            <label className="text-sm text-gray-700 leading-snug">
+                              I give permission to use this testimonial across
+                              social channels and other marketing efforts
+                            </label>
+                          </div>
                         </div>
-                        <div className="flex items-start gap-2">
-                          <input
-                            type="checkbox"
-                            className="mt-1 cursor-pointer"
-                            onClick={() => setPermission((prev) => !prev)}
-                          />
-                          <label className="text-sm text-gray-700 leading-snug">
-                            I give permission to use this testimonial across
-                            social channels and other marketing efforts
-                          </label>
-                        </div>
-                      </div>
-                    )}
-                    {/* Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-3 mt-4">
-                      {status === "idle" && (
-                        <button
-                          className="bg-blue-500 hover:bg-blue-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
-                          onClick={() =>
-                            handleStartRecording(
-                              startRecording,
-                              stopRecording,
-                              status
-                            )
-                          }
-                        >
-                          <Video /> Record Video
-                        </button>
                       )}
-                      {status === "recording" && (
-                        <button
-                          className="bg-red-500 hover:bg-red-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
-                          onClick={() =>
-                            handleStopRecording(stopRecording, status)
-                          }
-                        >
-                          <VideoOff /> Stop Recording
-                        </button>
-                      )}
-                      {console.log(permission)}
-                      {status === "stopped" && (
-                        <div className="flex flex-col w-full gap-2">
+                      {/* Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                        {status === "idle" && (
                           <button
-                            className="bg-yellow-500 hover:bg-yellow-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
-                            onClick={() => setStatus("idle")}
+                            className="bg-blue-500 hover:bg-blue-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
+                            onClick={() =>
+                              handleStartRecording(
+                                startRecording,
+                                stopRecording,
+                                status
+                              )
+                            }
+                            type="button"
                           >
-                            <History /> Record Again
+                            <Video /> Record Video
                           </button>
+                        )}
+                        {status === "recording" && (
+                          <button
+                            className="bg-red-500 hover:bg-red-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
+                            onClick={() =>
+                              handleStopRecording(stopRecording, status)
+                            }
+                            type="button"
+                          >
+                            <VideoOff /> Stop Recording
+                          </button>
+                        )}
+                        {status === "stopped" && (
+                          <div className="flex flex-col w-full gap-2">
+                            <button
+                              className="bg-yellow-500 hover:bg-yellow-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
+                              onClick={() => setStatus("idle")}
+                              type="button"
+                            >
+                              <History /> Record Again
+                            </button>
 
-                          <button
-                            className="bg-green-500 hover:bg-green-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
-                            onClick={handleSubmit}
-                          >
-                            <Send /> Confirm to Send
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </>
+                            <button
+                              className="bg-green-500 hover:bg-green-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
+                              type="submit"
+                            >
+                              <Send /> Confirm to Send
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </form>
+                  </div>
                 );
               }}
             />
