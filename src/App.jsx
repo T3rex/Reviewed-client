@@ -10,6 +10,7 @@ import Dashboard from "./components/Dashboard";
 import AuthProvider from "./hooks/AuthProvider";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import ReviewForm from "./components/ReviewForm";
+import ManageReviews from "./components/ManageReviews";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 
 function Applayout() {
@@ -46,6 +47,10 @@ const appRouter = createBrowserRouter([
         element: <Signup />,
       },
       { path: "/signin", element: <Signin /> },
+      {
+        path: "campaign/:campaignId",
+        element: <ManageReviews />,
+      },
     ],
   },
   {

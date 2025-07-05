@@ -13,10 +13,13 @@ import axios from "axios";
 import NewCampaignModal from "./NewCampaignModal";
 import InputModal from "./InputModal";
 import { SERVER_DOMAIN } from "../AppConfig";
+import { useNavigate } from "react-router";
 
 function CampaignCard({ campaign }) {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showInputModal, setShowInputModal] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleEditCampaign = () => {
     setShowEditModal(true);
@@ -77,7 +80,12 @@ function CampaignCard({ campaign }) {
             <Ellipsis className="cursor-pointer" color="white" />
           )}
         >
-          <DropdownItem icon={ListTodo}>Manage reviews</DropdownItem>
+          <DropdownItem
+            icon={ListTodo}
+            onClick={() => navigate(`/campaign/${campaign?._id}`)}
+          >
+            Manage reviews
+          </DropdownItem>
           <DropdownDivider />
           <DropdownItem
             icon={Link}

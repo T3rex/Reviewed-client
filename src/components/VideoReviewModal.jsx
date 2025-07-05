@@ -5,8 +5,12 @@ import { ReactMediaRecorder } from "react-media-recorder";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import StarRating from "./StarRating";
+import axios from "axios";
+import { SERVER_DOMAIN } from "../AppConfig";
+import { useParams } from "react-router-dom";
 
 function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
+  const { campaignId, campaignName } = useParams();
   const [countDown, setCountDown] = useState();
   const [videoDevices, setVideoDevice] = useState([]);
   const [audioDevices, setAudioDevices] = useState([]);
@@ -28,8 +32,25 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
       toast.error("Please give permission!", { duration: 4000 });
       return;
     }
-    console.log(data);
-    toast.success("Review sent successfully.", { duration: 4000 });
+    const payload = { ...data, rating };
+    submitForm(payload);
+  };
+
+  const submitForm = async (data) => {
+    try {
+      const response = await axios.post(
+        `${SERVER_DOMAIN}/api/v1/submit/${campaignName}/${campaignId}`,
+        data,
+        { withCredentials: true }
+      );
+      toast.success("Review submitted succesfully.", { duration: 4000 });
+      setShowVideoReviewModal(false);
+    } catch (error) {
+      toast.error("Something went wrong try again!! ", {
+        duration: 4000,
+      });
+      console.error("Error creating campaign:", error);
+    }
   };
 
   const handleClose = (stopRecording, status) => {
