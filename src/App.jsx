@@ -49,7 +49,11 @@ const appRouter = createBrowserRouter([
       { path: "/signin", element: <Signin /> },
       {
         path: "campaign/:campaignId",
-        element: <ManageReviews />,
+        element: (
+          <ProtectedRoute>
+            <ManageReviews />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

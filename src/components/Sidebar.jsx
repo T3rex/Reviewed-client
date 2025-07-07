@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 function Sidebar() {
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -21,47 +23,86 @@ function Sidebar() {
       )}
 
       {/* Sidebar content (only visible when open) */}
-      <div
-        className={`${
-          sidebarOpen ? "block" : "hidden"
-        } transition-all duration-300 `}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-            My Dashboard
-          </h2>
-          <X
-            className="cursor-pointer text-gray-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
-            onClick={() => setSidebarOpen(false)}
-          />
+      {
+        <div
+          className={`${
+            sidebarOpen ? "block" : "hidden"
+          } transition-all duration-300 `}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+              {location.pathname.startsWith("/dashboard")
+                ? "My Dashboard"
+                : "My Campaign"}
+            </h2>
+            <X
+              className="cursor-pointer text-gray-600 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
+              onClick={() => setSidebarOpen(false)}
+            />
+          </div>
+          {location.pathname.startsWith("/dashboard") ? (
+            <nav className="space-y-3">
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Overview
+              </a>
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Campaigns
+              </a>
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Testimonials
+              </a>
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Settings
+              </a>
+            </nav>
+          ) : (
+            <nav className="space-y-3">
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                All
+              </a>
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Video
+              </a>
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Text
+              </a>
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Liked
+              </a>
+              <a
+                href="#"
+                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+              >
+                Archived
+              </a>
+            </nav>
+          )}
         </div>
-        <nav className="space-y-3">
-          <a
-            href="#"
-            className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-          >
-            Overview
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-          >
-            Campaigns
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-          >
-            Testimonials
-          </a>
-          <a
-            href="#"
-            className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-          >
-            Settings
-          </a>
-        </nav>
-      </div>
+      }
     </aside>
   );
 }
