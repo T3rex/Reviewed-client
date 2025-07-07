@@ -3,22 +3,32 @@ import Sidebar from "./Sidebar";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { SERVER_DOMAIN } from "../AppConfig";
-import { MonitorX } from "lucide-react";
+import toast from "react-hot-toast";
+import LoadingSpinner from "./LoadingSpinner";
+import CampaignHeader from "./CampaignHeader";
+import NodeReview from "./NoReview";
+import ReviewCard from "./ReviewCard";
 
 function ManageCampaign() {
-  const [campaignDetails, setCampaignDetails] = useState({});
-  const [filter, setFilter] = useState("all");
-  const [allReviews, setAllReviews] = useState([]);
   const { campaignId } = useParams();
+  const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [campaignDetails, setCampaignDetails] = useState({});
+  const [allReviews, setAllReviews] = useState([]);
 
   useEffect(() => {
-    Promise.all([fetchAllReviews(), fetchCampaignDetails()]);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchAllReviews(), fetchCampaignDetails()]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
-
-  // useEffect(() => {
-  //   updateReviewsFilter(filter);
-  //   console.log("Filter updated:", filter);
-  // }, [filter]);
 
   const fetchAllReviews = async () => {
     try {
@@ -29,6 +39,7 @@ function ManageCampaign() {
       // console.log("All Reviews:", response.data.data);
       setAllReviews(response.data.data);
     } catch (error) {
+      toast.error("Failed to fetch reviews", { duration: 3000 });
       console.error("Error fetching reviews:", error);
     }
   };
@@ -41,6 +52,7 @@ function ManageCampaign() {
       );
       setCampaignDetails(response.data.data);
     } catch (error) {
+      toast.error("Failed to fetch campaign details", { duration: 3000 });
       console.error("Error fetching campaign details:", error);
     }
   };
@@ -64,59 +76,25 @@ function ManageCampaign() {
     <div className="min-h-screen w-full bg-gray-50 text-gray-800 dark:text-white dark:bg-gray-900 flex transition-all">
       <Sidebar filter={filter} setFilter={setFilter} />
 
-      <div className="flex-grow p-6">
-        {campaignDetails && (
-          <div className="my-5 flex items-center gap-4">
-            <img
-              src={campaignDetails.campaignLogo}
-              alt="Campaign Logo"
-              className="w-24 h-24 object-contain rounded"
-            />
-            <h1 className="text-3xl font-bold capitalize">
-              {campaignDetails?.campaignName}
-            </h1>
-          </div>
-        )}
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="flex-grow p-6">
+          {campaignDetails && (
+            <CampaignHeader campaignDetails={campaignDetails} />
+          )}
 
-        {filteredReviews?.length > 0 ? (
-          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredReviews.map((review) => (
-              <div
-                className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow space-y-2"
-                key={review?._id}
-              >
-                <p className="text-gray-800 dark:text-white">
-                  {review?.reviewText}
-                </p>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  — {review?.reviewerName}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-[75vh] w-full">
-            <div className="flex flex-col items-center text-center space-y-4">
-              <MonitorX size={70} className="text-gray-400" />
-              <h2 className="text-2xl font-semibold">No reviews yet</h2>
-              <div className="gap-3 mt-4 flex flex-col sm:flex-row">
-                <button className="cursor-pointer items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700">
-                  Add a video
-                </button>
-                <button className="cursor-pointer items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700">
-                  Add a text
-                </button>
-                <button
-                  className="cursor-not-allowed items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-400"
-                  disabled
-                >
-                  Bulk import
-                </button>
-              </div>
+          {filteredReviews?.length > 0 ? (
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredReviews.map((review) => (
+                <ReviewCard review={review} key={review._id} />
+              ))}
             </div>
-          </div>
-        )}
-      </div>
+          ) : (
+            <NodeReview filter={filter} />
+          )}
+        </div>
+      )}
     </div>
   );
 }
