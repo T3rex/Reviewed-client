@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
-function Sidebar() {
+function Sidebar({ filter, setFilter }) {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -68,37 +68,29 @@ function Sidebar() {
               </a>
             </nav>
           ) : (
-            <nav className="space-y-3">
-              <a
-                href="#"
-                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                All
-              </a>
-              <a
-                href="#"
-                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Video
-              </a>
-              <a
-                href="#"
-                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Text
-              </a>
-              <a
-                href="#"
-                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Liked
-              </a>
-              <a
-                href="#"
-                className="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Archived
-              </a>
+            <nav className="space-y-2 w-full">
+              {[
+                { label: "All" },
+                { label: "Video" },
+                { label: "Text" },
+                { label: "Approved" },
+                { label: "Unapproved" },
+              ].map(({ label }) => (
+                <button
+                  key={label}
+                  onClick={() => setFilter(label.toLowerCase())}
+                  className={`w-full text-left px-3 py-2 rounded-md transition-all
+                    cursor-pointer focus:outline-none
+                    ${
+                      filter === label.toLowerCase()
+                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 font-semibold"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 hover:font-semibold"
+                    }
+                  `}
+                >
+                  {label}
+                </button>
+              ))}
             </nav>
           )}
         </div>

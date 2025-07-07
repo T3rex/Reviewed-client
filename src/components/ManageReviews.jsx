@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Sidebar from "./Sidebar";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { SERVER_DOMAIN } from "../AppConfig";
 import { MonitorX } from "lucide-react";
 
 function ManageCampaign() {
-  const [reviews, setReviews] = useState([]);
   const [campaignDetails, setCampaignDetails] = useState({});
+  const [filter, setFilter] = useState("all");
   const [allReviews, setAllReviews] = useState([]);
-  const location = useLocation();
-  const campaignId = location.pathname.split("/").pop();
+  const { campaignId } = useParams();
 
   useEffect(() => {
-    fetchAllReviews();
-    fetchCampaignDetails();
+    Promise.all([fetchAllReviews(), fetchCampaignDetails()]);
   }, []);
+
+  // useEffect(() => {
+  //   updateReviewsFilter(filter);
+  //   console.log("Filter updated:", filter);
+  // }, [filter]);
 
   const fetchAllReviews = async () => {
     try {
@@ -36,16 +39,30 @@ function ManageCampaign() {
         `${SERVER_DOMAIN}/api/v1/campaign/${campaignId}`,
         { withCredentials: true }
       );
-      console.log("Campaign Details:", response.data.data);
       setCampaignDetails(response.data.data);
     } catch (error) {
       console.error("Error fetching campaign details:", error);
     }
   };
 
+  const filteredReviews = useMemo(() => {
+    switch (filter) {
+      case "text":
+        return allReviews.filter((r) => r.reviewType === "text");
+      case "video":
+        return allReviews.filter((r) => r.reviewType === "video");
+      case "approved":
+        return allReviews.filter((r) => r.isApproved);
+      case "unapproved":
+        return allReviews.filter((r) => !r.isApproved);
+      default:
+        return allReviews;
+    }
+  }, [filter, allReviews]);
+
   return (
     <div className="min-h-screen w-full bg-gray-50 text-gray-800 dark:text-white dark:bg-gray-900 flex transition-all">
-      <Sidebar />
+      <Sidebar filter={filter} setFilter={setFilter} />
 
       <div className="flex-grow p-6">
         {campaignDetails && (
@@ -61,9 +78,9 @@ function ManageCampaign() {
           </div>
         )}
 
-        {allReviews?.length > 0 ? (
+        {filteredReviews?.length > 0 ? (
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {allReviews.map((review) => (
+            {filteredReviews.map((review) => (
               <div
                 className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow space-y-2"
                 key={review?._id}

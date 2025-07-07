@@ -14,7 +14,12 @@ function TextReviewModal({ setShowTextReviewModal, formConfig }) {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({ defaultValues: { reviewerPhoto: "https://i.pravatar.cc/40" } });
+  } = useForm({
+    defaultValues: {
+      reviewerPhoto: "https://i.pravatar.cc/40",
+      reviewType: "text",
+    },
+  });
 
   const { campaignName, campaignId } = useParams();
   const [rating, setRating] = useState(5);

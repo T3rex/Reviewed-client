@@ -32,9 +32,11 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white border-b-2 dark:bg-gray-800 px-6 py-4 shadow flex items-center justify-between">
-      <div className="text-xl font-bold text-gray-800 dark:text-white">
-        MyBrand
-      </div>
+      <Link to={"/dashboard"}>
+        <div className="text-xl font-bold text-gray-800 dark:text-white">
+          MyBrand
+        </div>
+      </Link>
 
       {user?.user ? (
         // Show dropdown if logged in

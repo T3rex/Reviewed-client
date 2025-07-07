@@ -24,7 +24,7 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({ defaultValues: { reviewType: "video" } });
 
   const onSubmit = (data) => {
     if (!permission) {

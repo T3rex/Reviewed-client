@@ -82,7 +82,9 @@ function CampaignCard({ campaign }) {
         >
           <DropdownItem
             icon={ListTodo}
-            onClick={() => navigate(`/campaign/${campaign?._id}`)}
+            onClick={() =>
+              navigate(`/campaign/${campaign?._id}`, { state: { campaign } })
+            }
           >
             Manage reviews
           </DropdownItem>
