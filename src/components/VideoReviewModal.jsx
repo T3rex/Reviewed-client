@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import StarRating from "./StarRating";
 import axios from "axios";
-import { SERVER_DOMAIN } from "../AppConfig";
+import { SERVER_DOMAIN, CLOUDINARY_UPLOAD_URL } from "../AppConfig";
 import { useParams } from "react-router-dom";
 
 function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
@@ -18,7 +18,7 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
   const [selectedAudioDeviceId, setSelectedAudioDeviceId] = useState("");
   const [permission, setPermission] = useState(false);
   const [rating, setRating] = useState(5);
-
+  const reviewVideoFile = useRef(null);
   const {
     register,
     handleSubmit,
@@ -26,14 +26,45 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
     formState: { errors },
   } = useForm({ defaultValues: { reviewType: "video" } });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (!permission) {
-      console.log("Permission not granted");
-      toast.error("Please give permission!", { duration: 4000 });
+      toast.error("Please give permission!");
       return;
     }
-    const payload = { ...data, rating };
-    submitForm(payload);
+    try {
+      const uploadRes = await uploadVideoFile(reviewVideoFile.current);
+      if (!uploadRes) return;
+
+      const payload = {
+        ...data,
+        rating,
+        videoLink: uploadRes.secure_url,
+        reviewType: "video",
+      };
+      await submitForm(payload);
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong!");
+    }
+  };
+
+  const uploadVideoFile = async (blobUrl) => {
+    try {
+      const blob = await fetch(blobUrl).then((res) => res.blob());
+
+      const formData = new FormData();
+      formData.append("file", blob);
+      formData.append("upload_preset", "testimonial_preset");
+      formData.append("folder", "testimonials");
+
+      const response = await axios.post(CLOUDINARY_UPLOAD_URL, formData);
+
+      return response.data; // contains secure_url, etc.
+    } catch (err) {
+      console.error("Upload failed:", err);
+      toast.error("Video upload failed");
+      return null;
+    }
   };
 
   const submitForm = async (data) => {
@@ -170,8 +201,11 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
                 startRecording,
                 stopRecording,
                 mediaBlobUrl,
+                clearBlobUrl,
                 previewStream,
               }) => {
+                reviewVideoFile.current = mediaBlobUrl;
+
                 return (
                   <div>
                     {/* Close Button */}
@@ -439,7 +473,7 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
                           <div className="flex flex-col w-full gap-2">
                             <button
                               className="bg-yellow-500 hover:bg-yellow-600 rounded-md px-5 py-2 text-white font-semibold flex items-center justify-center gap-2 w-full cursor-pointer"
-                              onClick={() => setStatus("idle")}
+                              onClick={() => clearBlobUrl()}
                               type="button"
                             >
                               <History /> Record Again
