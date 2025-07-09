@@ -8,6 +8,7 @@ import StarRating from "./StarRating";
 import axios from "axios";
 import { SERVER_DOMAIN, CLOUDINARY_UPLOAD_URL } from "../AppConfig";
 import { useParams } from "react-router-dom";
+import "@vaadin/progress-bar/theme/material/vaadin-progress-bar.js";
 
 function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
   const { campaignId, campaignName } = useParams();
@@ -19,6 +20,8 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
   const [permission, setPermission] = useState(false);
   const [rating, setRating] = useState(5);
   const reviewVideoFile = useRef(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const {
     register,
     handleSubmit,
@@ -48,6 +51,10 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
     }
   };
 
+  useEffect(() => {
+    console.log("Upload Progress:", uploadProgress);
+  }, [uploadProgress]);
+
   const uploadVideoFile = async (blobUrl) => {
     try {
       const blob = await fetch(blobUrl).then((res) => res.blob());
@@ -57,9 +64,16 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
       formData.append("upload_preset", "testimonial_preset");
       formData.append("folder", "testimonials");
 
-      const response = await axios.post(CLOUDINARY_UPLOAD_URL, formData);
+      const response = await axios.post(CLOUDINARY_UPLOAD_URL, formData, {
+        onUploadProgress: (progressEvent) => {
+          const percent = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(percent);
+        },
+      });
 
-      return response.data; // contains secure_url, etc.
+      return response.data;
     } catch (err) {
       console.error("Upload failed:", err);
       toast.error("Video upload failed");
@@ -485,6 +499,9 @@ function VideoReviewModal({ setShowVideoReviewModal, formConfig }) {
                             >
                               <Send /> Confirm to Send
                             </button>
+                            <vaadin-progress-bar
+                              value={uploadProgress / 100}
+                            ></vaadin-progress-bar>
                           </div>
                         )}
                       </div>
