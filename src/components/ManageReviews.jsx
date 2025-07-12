@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import Sidebar from "./Sidebar";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -15,29 +15,77 @@ function ManageCampaign() {
   const [loading, setLoading] = useState(true);
   const [campaignDetails, setCampaignDetails] = useState({});
   const [allReviews, setAllReviews] = useState([]);
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(5);
+  const [hasMore, setHasMore] = useState(true);
+  const loaderRef = useRef(null);
 
+  // Fetch initial data when component mounts
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        await Promise.all([fetchAllReviews(), fetchCampaignDetails()]);
+        await Promise.all([fetchAllReviews(0), fetchCampaignDetails()]);
       } catch (error) {
+        toast.error("Failed to fetch data", { duration: 3000 });
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
+  // Observe the loader element for infinite scroll
+  useEffect(() => {
+    if (!loaderRef.current) return;
+    const loadingobserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          console.log("Loading more reviews...");
+          console.log("inside observer", hasMore);
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
 
-  const fetchAllReviews = async () => {
+    loadingobserver.observe(loaderRef.current);
+    return () => {
+      if (loaderRef.current) {
+        loadingobserver.unobserve(loaderRef.current);
+      }
+    };
+  }, [hasMore]);
+
+  // Fetch more reviews when page changes
+  useEffect(() => {
+    if (page === 0) return;
+    const fetchMore = async () => {
+      await fetchAllReviews(page);
+    };
+    fetchMore();
+  }, [page]);
+
+  useEffect(() => {
+    setAllReviews([]);
+    setPage(0);
+    setHasMore(true);
+    fetchAllReviews(0);
+  }, [filter]);
+
+  // Fetch all reviews based on the current page
+  const fetchAllReviews = async (pageNum) => {
     try {
       const response = await axios.get(
         `${SERVER_DOMAIN}/api/v1/campaign/${campaignId}/review`,
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          params: { page: pageNum, limit },
+        }
       );
-      // console.log("All Reviews:", response.data.data);
-      setAllReviews(response.data.data);
+      setAllReviews((prev) => [...prev, ...response.data.data.reviews]);
+      setHasMore(response.data.data.hasMore);
     } catch (error) {
       toast.error("Failed to fetch reviews", { duration: 3000 });
       console.error("Error fetching reviews:", error);
@@ -73,28 +121,37 @@ function ManageCampaign() {
   }, [filter, allReviews]);
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 text-gray-800 dark:text-white dark:bg-gray-900 flex transition-all">
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white flex transition-all">
       <Sidebar filter={filter} setFilter={setFilter} />
+      <div className="flex flex-col w-full">
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <div className="flex-grow px-4 py-6 sm:px-6 lg:px-8">
+            {campaignDetails && (
+              <CampaignHeader campaignDetails={campaignDetails} />
+            )}
 
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <div className="flex-grow p-6">
-          {campaignDetails && (
-            <CampaignHeader campaignDetails={campaignDetails} />
-          )}
+            {filteredReviews.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-6">
+                {filteredReviews.map((review) => (
+                  <ReviewCard review={review} key={review._id} />
+                ))}
+              </div>
+            ) : (
+              <NodeReview filter={filter} />
+            )}
+          </div>
+        )}
 
-          {filteredReviews?.length > 0 ? (
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredReviews.map((review) => (
-                <ReviewCard review={review} key={review._id} />
-              ))}
-            </div>
-          ) : (
-            <NodeReview filter={filter} />
-          )}
+        {/* Infinite scroll loader */}
+        <div
+          ref={loaderRef}
+          className="h-12 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400"
+        >
+          {hasMore && !loading && <LoadingSpinner />}
         </div>
-      )}
+      </div>
     </div>
   );
 }
