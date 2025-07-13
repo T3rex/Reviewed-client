@@ -20,60 +20,6 @@ function ManageCampaign() {
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
 
-  // Fetch initial data when component mounts
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        await Promise.all([fetchAllReviews(0), fetchCampaignDetails()]);
-      } catch (error) {
-        toast.error("Failed to fetch data", { duration: 3000 });
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-  // Observe the loader element for infinite scroll
-  useEffect(() => {
-    if (!loaderRef.current) return;
-    const loadingobserver = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          console.log("Loading more reviews...");
-          console.log("inside observer", hasMore);
-          setPage((prevPage) => prevPage + 1);
-        }
-      },
-      { threshold: 1.0 }
-    );
-
-    loadingobserver.observe(loaderRef.current);
-    return () => {
-      if (loaderRef.current) {
-        loadingobserver.unobserve(loaderRef.current);
-      }
-    };
-  }, [hasMore]);
-
-  // Fetch more reviews when page changes
-  useEffect(() => {
-    if (page === 0) return;
-    const fetchMore = async () => {
-      await fetchAllReviews(page);
-    };
-    fetchMore();
-  }, [page]);
-
-  useEffect(() => {
-    setAllReviews([]);
-    setPage(0);
-    setHasMore(true);
-    fetchAllReviews(0);
-  }, [filter]);
-
   // Fetch all reviews based on the current page
   const fetchAllReviews = async (pageNum) => {
     try {
@@ -104,6 +50,51 @@ function ManageCampaign() {
       console.error("Error fetching campaign details:", error);
     }
   };
+
+  // Fetch initial data when component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchAllReviews(0), fetchCampaignDetails()]);
+      } catch (error) {
+        toast.error("Failed to fetch data", { duration: 3000 });
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+  // Observe the loader element for infinite scroll
+  useEffect(() => {
+    if (!loaderRef.current) return;
+    const loadingobserver = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    loadingobserver.observe(loaderRef.current);
+    return () => {
+      if (loaderRef.current) {
+        loadingobserver.unobserve(loaderRef.current);
+      }
+    };
+  }, [hasMore]);
+
+  // Fetch more reviews when page changes
+  useEffect(() => {
+    if (page === 0) return;
+    const fetchMore = async () => {
+      await fetchAllReviews(page);
+    };
+    fetchMore();
+  }, [page]);
 
   const filteredReviews = useMemo(() => {
     switch (filter) {

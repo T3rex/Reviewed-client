@@ -1,4 +1,5 @@
 import React from "react";
+import StarRating from "./StarRating";
 
 function ReviewCard({ review }) {
   return (
@@ -6,6 +7,11 @@ function ReviewCard({ review }) {
       className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow space-y-4"
       key={review?._id}
     >
+      {review?.rating && (
+        <div className="">
+          <StarRating rating={review.rating} mode={"display"} />
+        </div>
+      )}
       {review?.reviewText && (
         <p className="text-gray-800 dark:text-gray-200">{review.reviewText}</p>
       )}
