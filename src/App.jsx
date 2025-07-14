@@ -11,6 +11,7 @@ import AuthProvider from "./hooks/AuthProvider";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import ReviewForm from "./components/ReviewForm";
 import ManageReviews from "./components/ManageReviews";
+import LandingPage from "./components/LandingPage";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 
 function Applayout() {
@@ -34,6 +35,7 @@ const appRouter = createBrowserRouter([
     ),
     errorElement: <div>404 Not Found</div>,
     children: [
+      { path: "/", element: <LandingPage /> },
       {
         path: "/dashboard",
         element: (
