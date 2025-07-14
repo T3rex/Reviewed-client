@@ -6,7 +6,7 @@ function LandingPage() {
       <div className="text-3xl mt-20 md:text-5xl font-bold dark:text-white max-w-md md:max-w-2xl">
         Get reviews from your customers with ease
       </div>
-      <div className="text-base md:text-lg dark:text-gray-300 max-w-sm md:max-w-xl">
+      <div className="text-base md:text-lg dark:text-gray-300 max-w-sm md:max-w-3xl">
         Collecting reviews is hard, we get it! So we built reviews. In minutes,
         you can collect text and video reviews from your customers with no need
         for a developer or website hosting.
@@ -24,6 +24,15 @@ function LandingPage() {
         <a href="#" className="text-blue-500 hover:underline">
           See our pricing →
         </a>
+      </div>
+
+      <div className="text-3xl mt-20 md:text-5xl font-bold dark:text-white max-w-md md:max-w-2xl">
+        Add testimonials to your website with no coding!
+      </div>
+      <div className="text-base md:text-lg dark:text-gray-300 max-w-sm md:max-w-2xl">
+        Copy and paste our HTML code to add the Wall Of Love (👉 full version)
+        to your website. We support any no-code platform (Webflow, WordPress,
+        you name it!)
       </div>
     </div>
   );
